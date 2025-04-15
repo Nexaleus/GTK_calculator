@@ -34,6 +34,11 @@ add_executable(gtk_calculator src/main.c)
 # Link GTK4 to the executable
 target_link_libraries(gtk_calculator PUBLIC PkgConfig::GTK4)
 
+# Hide console window for Release builds on Windows
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(gtk_calculator PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
+
 # Optional: Specify C standard if needed (e.g., C11 or C17)
 # set(CMAKE_C_STANDARD 11)
 # set(CMAKE_C_STANDARD_REQUIRED True)
