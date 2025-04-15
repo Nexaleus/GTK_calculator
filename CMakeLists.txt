@@ -6,6 +6,8 @@ set(PKG_CONFIG_EXECUTABLE F:/Development/vcpkg/vcpkg/packages/pkgconf_x64-window
 project(gtk_calculator LANGUAGES C)
 # --- Build Configuration Flags ---
 find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK4 REQUIRED IMPORTED_TARGET GLOBAL gtk4)
+
 # Common flags for all builds (optional, add if needed)
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4") # Example: Enable more warnings
 
@@ -28,6 +30,9 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG /MD")
 
 # Add the executable target
 add_executable(gtk_calculator src/main.c)
+
+# Link GTK4 to the executable
+target_link_libraries(gtk_calculator PUBLIC PkgConfig::GTK4)
 
 # Optional: Specify C standard if needed (e.g., C11 or C17)
 # set(CMAKE_C_STANDARD 11)

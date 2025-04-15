@@ -2,6 +2,7 @@
   "dependencies": [
     "pkgconf",
     "vcpkg-pkgconfig-get-modules",
-    "vcpkg-tool-ninja"
+    "vcpkg-tool-ninja",
+    "gtk"
   ]
 }

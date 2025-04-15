@@ -1,2 +1,3 @@
-GTK_calculator.code-workspace
 build/
+GTK_calculator.code-workspace
+CMakeUserPresets.json
