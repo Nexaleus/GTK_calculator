@@ -1,0 +1,7 @@
+{
+  "dependencies": [
+    "pkgconf",
+    "vcpkg-pkgconfig-get-modules",
+    "vcpkg-tool-ninja"
+  ]
+}

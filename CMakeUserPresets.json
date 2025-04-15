@@ -1,0 +1,12 @@
+{
+    "version": 2,
+    "configurePresets": [
+      {
+        "name": "debug(vcpkg)",
+        "inherits": "vcpkg-debug",
+        "environment": {
+          "VCPKG_ROOT": "F:/Development/vcpkg/vcpkg"
+        }
+      }
+    ]
+  }

@@ -1,0 +1,56 @@
+{
+    "version": 2,
+    "configurePresets": [
+      {
+        "name": "vcpkg-debug",
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/debug",
+        "cacheVariables": {
+          "CMAKE_TOOLCHAIN_FILE": {
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+          "type": "FILEPATH"
+          }, "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_C_COMPILER": "cl"
+        },
+        "toolset": {
+          "strategy": "external"
+        },
+        "architecture":{
+          "strategy": "external",
+          "value": "x64"
+        }
+      },
+      {
+        "name": "vcpkg-release",
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/release",
+        "cacheVariables": {
+          "CMAKE_TOOLCHAIN_FILE": {
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+          "type": "FILEPATH"
+          }, "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_C_COMPILER": "cl"
+        },
+        "toolset": {
+          "strategy": "external"
+        },
+        "architecture":{
+          "strategy": "external",
+          "value": "x64"
+        }
+      }
+    ],"buildPresets": [
+      {
+        "name": "app-debug",
+        "displayName": "App Debug Build",
+        "configurePreset": "vcpkg-debug",
+        "configuration": "Debug"
+      },
+       {
+        "name": "app-release",
+        "displayName": "App Release Build",
+        "configurePreset": "vcpkg-release",
+        "configuration": "Release"
+      }
+    ]
+  }
