@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "adwaita.h"
 
 // Include windows.h only on Windows Release builds where WinMain is needed
 #if defined(_WIN32) && defined(NDEBUG)
@@ -14,6 +15,8 @@ static void activate_app(GtkApplication* app, gpointer user_data) {
 
 // Core application logic (can be called by either main or WinMain)
 static int app_main(int argc, char **argv) {
+
+    
     GtkApplication *app = gtk_application_new("com.example.calculator",
                                              G_APPLICATION_DEFAULT_FLAGS);
     g_signal_connect(app, "activate", G_CALLBACK(activate_app), NULL);

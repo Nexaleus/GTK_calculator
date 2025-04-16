@@ -7,7 +7,7 @@ project(gtk_calculator LANGUAGES C)
 # --- Build Configuration Flags ---
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK4 REQUIRED IMPORTED_TARGET GLOBAL gtk4)
-
+pkg_check_modules(LIBADWAITA REQUIRED IMPORTED_TARGET GLOBAL libadwaita-1)
 # Common flags for all builds (optional, add if needed)
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4") # Example: Enable more warnings
 
@@ -32,7 +32,7 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG /MD")
 add_executable(gtk_calculator src/main.c)
 
 # Link GTK4 to the executable
-target_link_libraries(gtk_calculator PUBLIC PkgConfig::GTK4)
+target_link_libraries(gtk_calculator PUBLIC PkgConfig::GTK4 PkgConfig::LIBADWAITA)
 
 # Hide console window for Release builds on Windows
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_BUILD_TYPE STREQUAL "Release")

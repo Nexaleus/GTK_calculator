@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.94.1 -->
+<interface>
+  <!-- interface-name gtk_test.ui -->
+  <requires lib="gtk" version="4.12"/>
+  <object class="GtkWindow">
+    <child>
+      <object class="GtkGrid">
+        <property name="margin-bottom">2</property>
+        <property name="margin-end">2</property>
+        <property name="margin-start">2</property>
+        <property name="margin-top">2</property>
+        <child>
+          <object class="GtkButton">
+            <property name="label">click me!</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="column-span">1</property>
+              <property name="row">3</property>
+              <property name="row-span">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkImage">
+            <property name="can-focus">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="icon-name">computer</property>
+            <property name="pixel-size">37</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="column-span">1</property>
+              <property name="row">1</property>
+              <property name="row-span">1</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

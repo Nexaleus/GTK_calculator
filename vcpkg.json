@@ -1,8 +1,9 @@
 {
   "dependencies": [
+    "gtk",
     "pkgconf",
     "vcpkg-pkgconfig-get-modules",
     "vcpkg-tool-ninja",
-    "gtk"
+    "libadwaita"
   ]
 }
