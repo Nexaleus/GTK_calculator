@@ -1,51 +1,96 @@
 /* General window styling */
 window {
-    background-color: #420042; /* Light gray background */
+    /* Based on gtk.css @theme_bg_color_breeze */
+    background-color: #2a2e32;
 }
-
-
 
 /* Header bar styling */
 .header-bar {
-    background-color: #3498db; /* Blue header bar */
-    color: white; /* White text on header bar */
+    /* Based on gtk.css headerbar styling */
+    /* @theme_titlebar_background_breeze */
+    background-color: #31363b;
+    /* @theme_titlebar_foreground_breeze */
+    color: #fcfcfc;
+    /* @borders_breeze */
+    border-bottom: 1px solid #5f6265;
+    /* Added padding similar to headerbar */
+    padding: 6px;
+    /* Ensure top border radius matches gtk.css if needed, but often handled by window manager */
+    border-radius: 6px 6px 0 0;
 }
 
 .header-bar .title {
-    color: rgb(66, 69, 255);
-    font-weight: bold;
-    font-size: larger;
+    /* Based on gtk.css headerbar .title styling */
+    /* Inherits color from .header-bar */
+    color: #fcfcfc;
+    /* gtk.css uses normal weight for title */
+    font-weight: normal;
+    /* Padding from gtk.css */
+    padding: 0px 12px;
 }
 
 /* Button styling */
 button {
-    /*background-color: #bdc3c7; /* Silver button background */
-    /*color: #2c3e50; /* Dark text */
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
+    /* Based on gtk.css button styling */
+    /* @theme_button_background_normal_breeze (simplified from gradient) */
+    background-color: #31363b;
+    /* @theme_button_foreground_normal_breeze */
+    color: #fcfcfc;
+    /* @borders_breeze */
+    border: 1px solid #5f6265;
+     /* Padding from gtk.css */
+    padding: 6px 6px;
+    /* border-radius: 0.75mm is approx 3px */
+    border-radius: 3px;
+     /* Subtle shadow like gtk.css */
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.125);
+    text-shadow: none;
+    -gtk-icon-shadow: none;
 }
 
 button:hover {
-    /*background-color: #95a5a6; /* Darker silver on hover */
+    /* Based on gtk.css button:hover styling */
+    /* Background usually doesn't change much, border highlights */
+    background-color: #31363b; /* Keep base background */
+    /* @theme_button_decoration_hover_breeze */
+    border-color: #3daee9;
 }
 
+button:active {
+    /* Based on gtk.css button:active styling */
+    /* alpha(@theme_button_decoration_hover_breeze, 0.333) */
+    background-color: rgba(61, 174, 233, 0.333);
+    border-color: #3daee9; /* Keep hover border color */
+    box-shadow: none; /* Active state often removes shadow */
+}
+
+
 /* Style for suggested action buttons (e.g., OK, Save) */
+/* Using @success_color_breeze based on image, though gtk.css sometimes uses focus color */
 button.suggested-action {
-    background-color: #2ecc71; /* Green background */
-    color: white;
+    /* @success_color_breeze (Solid color based on image) */
+    background-color: #27ae60;
+    color: white; /* Keep white text */
+    border-color: #27ae60; /* Match background or slightly darker */
 }
 
 button.suggested-action:hover {
-    background-color: #27ae60; /* Darker green on hover */
+    /* Darker green on hover, shade(#27ae60, 0.9) */
+    background-color: #239a55;
+    border-color: #239a55;
 }
 
 /* Style for destructive action buttons (e.g., Delete, Cancel) */
+/* Using @error_color_breeze based on gtk.css variable */
 button.destructive-action {
-    background-color: #e74c3c; /* Red background */
-    color: white;
+    /* @error_color_breeze (Solid color based on typical usage) */
+    background-color: #da4453;
+    color: white; /* Keep white text */
+    border-color: #da4453; /* Match background or slightly darker */
 }
 
 button.destructive-action:hover {
-    background-color: #c0392b; /* Darker red on hover */
+     /* Darker red on hover, shade(#da4453, 0.9) */
+    background-color: #c23a48;
+    border-color: #c23a48;
 }
