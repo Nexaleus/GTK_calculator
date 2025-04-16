@@ -5,6 +5,9 @@
 		}
 	],
 	"settings": {
-		"explorer.excludeGitIgnore": true
+		"explorer.excludeGitIgnore": true,
+		"files.associations": {
+			"xiosbase": "c"
+		}
 	}
 }
