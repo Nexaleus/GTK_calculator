@@ -18,7 +18,8 @@
 			"gdkdrag.h": "c",
 			"gdkdmabufformats.h": "c",
 			"gdkdmabuftexture.h": "c",
-			"adw-version.h": "c"
+			"adw-version.h": "c",
+			"windows.h": "c"
 		}
 	}
 }

@@ -4,6 +4,8 @@
   <!-- interface-name gtk_test.ui -->
   <requires lib="gtk" version="4.12"/>
   <object class="GtkWindow">
+    <property name="default-height">480</property>
+    <property name="default-width">640</property>
     <child>
       <object class="GtkGrid">
         <property name="margin-bottom">2</property>
@@ -14,10 +16,8 @@
           <object class="GtkButton">
             <property name="label">click me!</property>
             <layout>
-              <property name="column">3</property>
-              <property name="column-span">1</property>
-              <property name="row">3</property>
-              <property name="row-span">1</property>
+              <property name="column">1</property>
+              <property name="row">2</property>
             </layout>
           </object>
         </child>
@@ -37,5 +37,6 @@
         </child>
       </object>
     </child>
+    <style/>
   </object>
 </interface>
