@@ -26,7 +26,7 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG /MD")
 # set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /LTCG") # Link-Time Code Generation (pairs with /GL)
 
 
-# --- Target Definition ---
+# --- Target Definition ---2
 
 # Add the executable target
 add_executable(gtk_calculator src/main.c)

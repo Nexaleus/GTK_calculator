@@ -9,6 +9,8 @@ window {
     /* Based on gtk.css headerbar styling */
     /* @theme_titlebar_background_breeze */
     background-color: #31363b;
+    /*background-color: #ff0000;*/
+
     /* @theme_titlebar_foreground_breeze */
     color: #fcfcfc;
     /* @borders_breeze */
@@ -31,21 +33,58 @@ window {
 
 /* Button styling */
 button {
-    /* Based on gtk.css button styling */
-    /* @theme_button_background_normal_breeze (simplified from gradient) */
+    /*Based on gtk.css button styling */
+    /*@theme_button_background_normal_breeze (simplified from gradient)*/ 
     background-color: #31363b;
-    /* @theme_button_foreground_normal_breeze */
+    /*@theme_button_foreground_normal_breeze */
     color: #fcfcfc;
-    /* @borders_breeze */
+    /*@borders_breeze*/
     border: 1px solid #5f6265;
-     /* Padding from gtk.css */
+     /*Padding from gtk.css */
     padding: 6px 6px;
-    /* border-radius: 0.75mm is approx 3px */
+    /*border-radius: 0.75mm is approx 3px*/
     border-radius: 3px;
-     /* Subtle shadow like gtk.css */
+     /*Subtle shadow like gtk.css */
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.125);
     text-shadow: none;
     -gtk-icon-shadow: none;
+}
+
+
+button.close{
+    background-color: #31363b; /* Red background */
+    color: #fcfcfc; /* White icon/text */
+    /* Resetting borders/shadows might be needed depending on the base theme */
+    border: none;
+    box-shadow: none;
+    /* You might need to adjust padding/margins if the size changes */
+    padding: 0;
+    margin: 0 2px; /* Add some spacing between buttons */
+    min-height: 24px; /* Ensure minimum size */
+    min-width: 24px;
+
+}
+
+/*windowcontrols{
+    background-color: #ff0000; /* Red background * /
+    color: #fcfcfc; /* White icon/text * /
+    /* Resetting borders/shadows might be needed depending on the base theme * /
+    border: none;
+    box-shadow: none;
+    /* You might need to adjust padding/margins if the size changes * /
+    padding: 0;
+    margin: 0 2px; /* Add some spacing between buttons * /
+    min-height: 24px; /* Ensure minimum size * /
+    min-width: 24px;
+}*/
+
+/* Optional: Style hover/active states for consistency */
+.AdwHeaderBar button.titlebutton:hover {
+    background-color: #cc0000; /* Darker red on hover */
+}
+
+.AdwHeaderBar button.titlebutton:active {
+    background-color: #990000; /* Even darker red when pressed */
 }
 
 button:hover {

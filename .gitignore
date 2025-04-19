@@ -1,6 +1,11 @@
 res/themeRes/assets/
 res/themeRes/gtk-4.0/gtk.css
+res/custom-theme.css
+res/custom-themeRRRRR.css
+
 build/
+
 GTK_calculator.code-workspace
 CMakeUserPresets.json
 gtk_calc_setup_wizard.iss
+
