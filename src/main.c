@@ -8,11 +8,11 @@
 
 static void activate_app(GtkApplication* app, gpointer user_data) {
     GtkWidget *window = gtk_application_window_new(app);
-    GtkWidget *label = gtk_label_new ("TEXT LABEL");
+    GtkWidget *label = gtk_label_new("THIS IS A LABEL");
 
     gtk_window_set_title(GTK_WINDOW(window), "Calculator");
-    gtk_window_set_default_size(GTK_WINDOW(window), 300, 400);
-    gtk_window_set_child (GTK_WINDOW (window), label);
+    gtk_window_set_default_size(GTK_WINDOW(window), 640, 480);
+    gtk_window_set_child(GTK_WINDOW(window), label);
 
     gtk_widget_set_visible(window, TRUE); // Use this instead
 }
@@ -21,6 +21,7 @@ static void activate_app(GtkApplication* app, gpointer user_data) {
 // Core application logic (can be called by either main or WinMain)
 static int app_main(int argc, char **argv) {
     //AdwApplication* app = NULL;
+
     GtkApplication* app = NULL;
 
     //GtkApplication* app = NULL;
@@ -73,11 +74,17 @@ static int app_main(int argc, char **argv) {
 // Windows Release entry point (uses WinMain, console hidden by linker flag)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     // g_application_run handles command line parsing on Windows when passed 0, NULL
+    g_setenv("GTK_CSD", "0", FALSE);
+    g_setenv("GTK_DEBUG", "interactive", FALSE);
+
     return app_main(0, NULL);
 }
 #else
 // Standard entry point for non-Windows OR Windows Debug builds (uses main, console shown)
 int main(int argc, char **argv) {
+    g_setenv("GTK_CSD", "0", FALSE);
+    g_setenv("GTK_DEBUG", "interactive", FALSE);
+
     return app_main(argc, argv);
 }
 #endif
