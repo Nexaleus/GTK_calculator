@@ -8,7 +8,7 @@
 #endif
 
 // Function to load a theme from the share/themes directory
-static int load_theme_from_share(const char *theme_name) {
+static void load_theme_from_share(const char *theme_name) {
     GtkCssProvider *provider = gtk_css_provider_new();
     GdkDisplay *display = gdk_display_get_default();
 
