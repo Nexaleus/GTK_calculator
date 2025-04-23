@@ -3,7 +3,7 @@
     "configurePresets": [
       {
         "name": "debug(vcpkg)",
-        "inherits": "vcpkg-debug",
+        "inherits": "vcpkg-win32-debug",
         "environment": {
           "VCPKG_ROOT": "F:/Development/vcpkg/vcpkg"
         }

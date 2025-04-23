@@ -1,3 +1,5 @@
+.vscode/
+
 res/themeRes/assets/
 res/themeRes/gtk-4.0/gtk.css
 res/custom-theme.css
@@ -9,3 +11,5 @@ GTK_calculator.code-workspace
 CMakeUserPresets.json
 gtk_calc_setup_wizard.iss
 
+gtk_ui_reference.png
+gtk_test_DONT_LOAD.ui

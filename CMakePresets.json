@@ -2,7 +2,7 @@
     "version": 2,
     "configurePresets": [
       {
-        "name": "vcpkg-debug",
+        "name": "vcpkg-win32-debug",
         "generator": "Ninja",
         "binaryDir": "${sourceDir}/build/debug",
         "cacheVariables": {
@@ -21,7 +21,7 @@
         }
       },
       {
-        "name": "vcpkg-release",
+        "name": "vcpkg-win32-release",
         "generator": "Ninja",
         "binaryDir": "${sourceDir}/build/release",
         "cacheVariables": {
@@ -41,15 +41,15 @@
       }
     ],"buildPresets": [
       {
-        "name": "app-debug",
-        "displayName": "App Debug Build",
-        "configurePreset": "vcpkg-debug",
+        "name": "app-win32-debug",
+        "displayName": "App Win32 Debug Build",
+        "configurePreset": "vcpkg-win32-debug",
         "configuration": "Debug"
       },
        {
-        "name": "app-release",
-        "displayName": "App Release Build",
-        "configurePreset": "vcpkg-release",
+        "name": "app-win32-release",
+        "displayName": "App Win32 Release Build",
+        "configurePreset": "vcpkg-win32-release",
         "configuration": "Release"
       }
     ]
