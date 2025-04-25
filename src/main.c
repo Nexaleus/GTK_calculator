@@ -12,19 +12,50 @@ static void load_theme_from_share(const char *theme_name) {
     GtkCssProvider *provider = gtk_css_provider_new();
     GdkDisplay *display = gdk_display_get_default();
 
-    char *theme_base_path = "share/themes/"; // Relative path to themes directory
-    char *css_file = "/gtk-4.0/gtk.css";
-    char *full_path = NULL;
+    /*gchar *theme_base_path = "share/themes/"; // Relative path to themes directory
+    gchar *css_file = "/gtk-4.0/gtk.css";
+    gchar *full_path = NULL;*/
 
-    // Construct the full path: share/themes/<theme_name>/gtk-4.0/gtk.css
-    // Note: g_build_filename handles path separators correctly across platforms.
-    full_path = g_build_filename(theme_base_path, theme_name, css_file, NULL);
+    g_print("Attempting to load theme: '%s'\n\n", theme_name);
+    gchar *relative_path = NULL;
+    gchar *absolute_path = NULL;
+    
+    //"share/themes/<theme_name>/gtk-4.0/gtk.css"
+    relative_path = g_build_filename("share","themes",theme_name,"gtk-4.0","gtk.css",NULL);
+    if(relative_path)
+    {
+        g_print("Connected relative path: %s\n",relative_path);
 
-    g_print("Attempting to load theme from: %s\n", full_path); // Debug print
+        absolute_path = g_canonicalize_filename(relative_path,NULL);
+        g_free(relative_path);
+    }
+    else
+    {
+        g_warning("Could not get relative file path.\n");
+    }
+
+
+    gchar *currentDir = NULL;
+    currentDir = g_get_current_dir();
+    if(currentDir)
+    {
+        g_print("Current Working Directory: %s\n", currentDir);
+        g_free(currentDir);
+    }
+    else
+    {
+        g_warning("Could not get current working directory.\n");
+    }
+
+
+    if(absolute_path)
+    {
+        g_print("Absolute file path: %s\n\n", absolute_path);
+        g_print("Attempting to load theme from: %s\n", absolute_path); // Debug print
 
     // Check if the file exists before attempting to load
-    if (g_file_test(full_path, G_FILE_TEST_IS_REGULAR)) {
-        gtk_css_provider_load_from_path(provider, full_path);
+    if (g_file_test(absolute_path, G_FILE_TEST_IS_REGULAR)) {
+        gtk_css_provider_load_from_path(provider, absolute_path);
 
         // Apply the CSS provider to the default display
         gtk_style_context_add_provider_for_display(display,
@@ -32,13 +63,17 @@ static void load_theme_from_share(const char *theme_name) {
                                                    GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
         g_print("Theme '%s' loaded successfully.\n", theme_name);
     } else {
-        g_warning("Theme CSS file not found or not accessible: %s", full_path);
+        g_warning("Theme CSS file not found or not accessible: %s", absolute_path);
     }
-    // Free the constructed path
-    g_free(full_path);
 
     // The provider is referenced by the display, so we can unref it here 
-    g_object_unref(provider);    
+    g_object_unref(provider); 
+    g_free(absolute_path);
+    }
+    else
+    {
+        g_warning("Could not get absolute file path.\n");
+    }
 }
 
 
@@ -54,10 +89,6 @@ static void activate_app(GtkApplication* app, gpointer user_data) {
 
 
 
-/*void btn_hide_icon(GtkButton* btn,gpointer user_data)
-{
-
-}*/
 
 
 // Core application logic (can be called by either main or WinMain)
@@ -79,9 +110,9 @@ static int app_main(int argc, char **argv) {
 #if defined(_WIN32) && defined(NDEBUG)
 // Windows Release entry point (uses WinMain, console hidden by linker flag)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    // g_application_run handles command line parsing on Windows when passed 0, NULL
+    //g_application_run handles command line parsing on Windows when passed 0, NULL   
     //g_setenv("GTK_CSD", "0", FALSE);
-    g_setenv("GTK_DEBUG", "interactive", FALSE);
+    //g_setenv("GTK_DEBUG", "interactive", FALSE);
 
     return app_main(0, NULL);
 }
@@ -89,7 +120,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 // Standard entry point for non-Windows OR Windows Debug builds (uses main, console shown)
 int main(int argc, char **argv) {
     //g_setenv("GTK_CSD", "0", FALSE);
-    g_setenv("GTK_DEBUG", "interactive", FALSE);
+    //g_setenv("GTK_DEBUG", "interactive", FALSE);
 
     return app_main(argc, argv);
 }
