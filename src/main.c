@@ -7,8 +7,86 @@
 #include <windows.h>
 #endif
 
+
+static void on_btn_test_clicked(GtkButton *button,gpointer user_data)
+{
+    GtkLabel *label = NULL;
+    label = GTK_LABEL(user_data);
+    if(!label)
+    {
+        g_warning("Received NULL label pointer in button handler!\n");
+        return;
+    }
+
+    if(gtk_widget_get_visible(GTK_WIDGET(label)))
+    {
+        gtk_widget_set_visible(GTK_WIDGET(label),FALSE);
+        g_print("Label was set to not visible\n");
+    }
+    else
+    {
+        gtk_widget_set_visible(GTK_WIDGET(label),TRUE);
+        g_print("Label was set to visible\n");
+    }
+}
+
+//G_MODULE_EXPORT void (alternative CALLBACK function declaration when compiling for Windows)
+static void load_ui_from_file(GtkApplication *app, const char* ui_file_name)
+{
+    //GError *load_error = NULL;
+    g_print("----------------------------------\nAttempting to load UI XML FILE: '%s'\n\n", ui_file_name);
+    gchar *relative_path = NULL;
+    gchar *absolute_path = NULL;
+    
+    //"res/<ui_file_name>"
+    relative_path = g_build_filename("res", "ui", ui_file_name, NULL);
+    if(relative_path)
+    {
+        g_print("Connected relative path: %s\n",relative_path);
+
+        absolute_path = g_canonicalize_filename(relative_path,NULL);
+        g_free(relative_path);
+    }
+    else
+    {
+        g_error("Could not get RELATIVE file path used for loading main UI structure.\n");      
+    }
+
+    if (absolute_path)
+    {
+        if (g_file_test(absolute_path, G_FILE_TEST_EXISTS))
+        {
+            GtkBuilder *builder = gtk_builder_new_from_file(absolute_path);
+
+            GObject *appWindow = gtk_builder_get_object(builder,"app_window");
+            gtk_window_set_application(GTK_WINDOW (appWindow),app);
+            GObject *label = gtk_builder_get_object(builder,"label_showtest");
+
+            GObject *button = gtk_builder_get_object(builder,"btn_showtest");
+            g_signal_connect(button,"clicked",G_CALLBACK(on_btn_test_clicked),label);
+            
+            /*if(!gtk_widget_get_visible(GTK_WIDGET(appWindow)))
+            {
+                gtk_widget_set_visible(GTK_WIDGET(appWindow),TRUE);
+            }*/
+
+            gtk_window_present(GTK_WINDOW(appWindow));
+            g_object_unref(builder);
+        }
+        else
+        {
+            g_error("FILE NOT FOUND AT: %s", absolute_path);
+        }
+        g_free(absolute_path);
+    }
+    else
+    {
+        g_error("Could not get ABSOLUTE file path used for loading main UI structure.\n");     
+    }
+}
+
 // Function to load a theme from the share/themes directory
-static void load_theme_from_share(const char *theme_name) {
+static void load_theme_from_file(const char *theme_name,gboolean force_dark) {
     GtkCssProvider *provider = gtk_css_provider_new();
     GdkDisplay *display = gdk_display_get_default();
 
@@ -21,7 +99,11 @@ static void load_theme_from_share(const char *theme_name) {
     gchar *absolute_path = NULL;
     
     //"share/themes/<theme_name>/gtk-4.0/gtk.css"
-    relative_path = g_build_filename("share","themes",theme_name,"gtk-4.0","gtk.css",NULL);
+    gchar *filename_gtk = NULL;
+    filename_gtk = force_dark ? "gtk-dark.css" : "gtk.css";
+    g_print("Theme source file name: %s\n", filename_gtk);
+    
+    relative_path = g_build_filename("share","themes",theme_name,"gtk-4.0",filename_gtk,NULL);
     if(relative_path)
     {
         g_print("Connected relative path: %s\n",relative_path);
@@ -78,16 +160,9 @@ static void load_theme_from_share(const char *theme_name) {
 
 
 static void activate_app(GtkApplication* app, gpointer user_data) {
-    GtkWidget *window = gtk_application_window_new(app);
- 
-    gtk_window_set_title(GTK_WINDOW(window), "Calculator");
-    gtk_window_set_default_size(GTK_WINDOW(window), 640, 480);
-    load_theme_from_share("Windows10");
-
-    gtk_widget_set_visible(window, TRUE); // Use this instead
+    load_ui_from_file(app, "gtk_test.ui");
+    load_theme_from_file("Windows10", TRUE);
 }
-
-
 
 
 
@@ -119,7 +194,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #else
 // Standard entry point for non-Windows OR Windows Debug builds (uses main, console shown)
 int main(int argc, char **argv) {
-    //g_setenv("GTK_CSD", "0", FALSE);
+    g_setenv("GTK_CSD", "0", FALSE);
     //g_setenv("GTK_DEBUG", "interactive", FALSE);
 
     return app_main(argc, argv);
