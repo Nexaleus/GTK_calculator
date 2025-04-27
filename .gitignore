@@ -5,16 +5,25 @@ res/themeRes/gtk-4.0/gtk.css
 res/custom-theme.css
 res/custom-themeRRRRR.css
 
-#IGNORING THE WHOLE BUILD DIRECTORY EXCEPT ONE FILE
+#IGNORING THE WHOLE BUILD DIRECTORY EXCEPT TWO FILES
 
 /build/*
 !/build/debug
 /build/debug/*
 !/build/debug/res
+!/build/debug/share
 /build/debug/res/*
+/build/debug/share/*
 !/build/debug/res/ui
+!/build/debug/share/themes
 /build/debug/res/ui/*
+/build/debug/share/themes/*
 !/build/debug/res/ui/gtk_test.ui
+!/build/debug/share/themes/Windows11_Round_Dark
+/build/debug/share/themes/Windows11_Round_Dark/*
+!/build/debug/share/themes/Windows11_Round_Dark/gtk-4.0
+/build/debug/share/themes/Windows11_Round_Dark/gtk-4.0/*
+!/build/debug/share/themes/Windows11_Round_Dark/gtk-4.0/gtk-dark.css
 
 ###################################################
 
