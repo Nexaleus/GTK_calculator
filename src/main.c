@@ -59,16 +59,7 @@ static void load_ui_from_file(GtkApplication *app, const char* ui_file_name)
             GtkBuilder *builder = gtk_builder_new_from_file(absolute_path);
 
             GObject *appWindow = gtk_builder_get_object(builder,"app_window");
-            gtk_window_set_application(GTK_WINDOW (appWindow),app);
-            GObject *label = gtk_builder_get_object(builder,"label_showtest");
-
-            GObject *button = gtk_builder_get_object(builder,"btn_showtest");
-            g_signal_connect(button,"clicked",G_CALLBACK(on_btn_test_clicked),label);
-            
-            /*if(!gtk_widget_get_visible(GTK_WIDGET(appWindow)))
-            {
-                gtk_widget_set_visible(GTK_WIDGET(appWindow),TRUE);
-            }*/
+            gtk_window_set_application(GTK_WINDOW (appWindow),app);         
 
             gtk_window_present(GTK_WINDOW(appWindow));
             g_object_unref(builder);
@@ -89,7 +80,6 @@ static void load_ui_from_file(GtkApplication *app, const char* ui_file_name)
 static void load_theme_from_file(const char *theme_name,gboolean force_dark) {
     GtkCssProvider *provider = gtk_css_provider_new();
     GdkDisplay *display = gdk_display_get_default();
-
     /*gchar *theme_base_path = "share/themes/"; // Relative path to themes directory
     gchar *css_file = "/gtk-4.0/gtk.css";
     gchar *full_path = NULL;*/
@@ -161,7 +151,7 @@ static void load_theme_from_file(const char *theme_name,gboolean force_dark) {
 
 static void activate_app(GtkApplication* app, gpointer user_data) {
     load_ui_from_file(app, "gtk_test.ui");
-    load_theme_from_file("Windows10", TRUE);
+    load_theme_from_file("Windows11_Round_Dark", TRUE);
 }
 
 
@@ -185,8 +175,8 @@ static int app_main(int argc, char **argv) {
 #if defined(_WIN32) && defined(NDEBUG)
 // Windows Release entry point (uses WinMain, console hidden by linker flag)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    //g_application_run handles command line parsing on Windows when passed 0, NULL   
-    //g_setenv("GTK_CSD", "0", FALSE);
+    //g_application_run handles command line parsing on Windows when passed 0, NULL     
+    g_setenv("GTK_CSD", "0", FALSE);
     //g_setenv("GTK_DEBUG", "interactive", FALSE);
 
     return app_main(0, NULL);
@@ -195,7 +185,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 // Standard entry point for non-Windows OR Windows Debug builds (uses main, console shown)
 int main(int argc, char **argv) {
     g_setenv("GTK_CSD", "0", FALSE);
-    //g_setenv("GTK_DEBUG", "interactive", FALSE);
+    g_setenv("GTK_DEBUG", "interactive", FALSE);
 
     return app_main(argc, argv);
 }

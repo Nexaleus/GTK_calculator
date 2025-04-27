@@ -5,7 +5,18 @@ res/themeRes/gtk-4.0/gtk.css
 res/custom-theme.css
 res/custom-themeRRRRR.css
 
-build/
+#IGNORING THE WHOLE BUILD DIRECTORY EXCEPT ONE FILE
+
+/build/*
+!/build/debug
+/build/debug/*
+!/build/debug/res
+/build/debug/res/*
+!/build/debug/res/ui
+/build/debug/res/ui/*
+!/build/debug/res/ui/gtk_test.ui
+
+###################################################
 
 GTK_calculator.code-workspace
 CMakeUserPresets.json
