@@ -25,7 +25,7 @@ res/custom-themeRRRRR.css
 /build/debug/share/themes/Windows11_Round_Dark/gtk-4.0/*
 !/build/debug/share/themes/Windows11_Round_Dark/gtk-4.0/gtk-dark.css
 
-###################################################
+####################################################
 
 GTK_calculator.code-workspace
 CMakeUserPresets.json

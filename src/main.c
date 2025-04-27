@@ -1,6 +1,4 @@
-#include <gtk/gtk.h>
-#include <glib/gstdio.h> // Needed for g_build_filename
-#include <string.h>     // Needed for strcat
+#include "Application.h"
 
 // Include windows.h only on Windows Release builds where WinMain is needed
 #if defined(_WIN32) && defined(NDEBUG)
@@ -8,28 +6,7 @@
 #endif
 
 
-static void on_btn_test_clicked(GtkButton *button,gpointer user_data)
-{
-    GtkLabel *label = NULL;
-    label = GTK_LABEL(user_data);
-    if(!label)
-    {
-        g_warning("Received NULL label pointer in button handler!\n");
-        return;
-    }
-
-    if(gtk_widget_get_visible(GTK_WIDGET(label)))
-    {
-        gtk_widget_set_visible(GTK_WIDGET(label),FALSE);
-        g_print("Label was set to not visible\n");
-    }
-    else
-    {
-        gtk_widget_set_visible(GTK_WIDGET(label),TRUE);
-        g_print("Label was set to visible\n");
-    }
-}
-
+/*
 //G_MODULE_EXPORT void (alternative CALLBACK function declaration when compiling for Windows)
 static void load_ui_from_file(GtkApplication *app, const char* ui_file_name)
 {
@@ -80,9 +57,6 @@ static void load_ui_from_file(GtkApplication *app, const char* ui_file_name)
 static void load_theme_from_file(const char *theme_name,gboolean force_dark) {
     GtkCssProvider *provider = gtk_css_provider_new();
     GdkDisplay *display = gdk_display_get_default();
-    /*gchar *theme_base_path = "share/themes/"; // Relative path to themes directory
-    gchar *css_file = "/gtk-4.0/gtk.css";
-    gchar *full_path = NULL;*/
 
     g_print("Attempting to load theme: '%s'\n\n", theme_name);
     gchar *relative_path = NULL;
@@ -155,7 +129,6 @@ static void activate_app(GtkApplication* app, gpointer user_data) {
 }
 
 
-
 // Core application logic (can be called by either main or WinMain)
 static int app_main(int argc, char **argv) {
     GtkApplication* app = NULL;
@@ -169,8 +142,7 @@ static int app_main(int argc, char **argv) {
     g_object_unref(app);
     return status;
 }
-
-
+*/
 
 #if defined(_WIN32) && defined(NDEBUG)
 // Windows Release entry point (uses WinMain, console hidden by linker flag)
@@ -179,14 +151,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     g_setenv("GTK_CSD", "0", FALSE);
     //g_setenv("GTK_DEBUG", "interactive", FALSE);
 
-    return app_main(0, NULL);
+    return app_main_run(0, NULL);
 }
 #else
 // Standard entry point for non-Windows OR Windows Debug builds (uses main, console shown)
 int main(int argc, char **argv) {
+
+
     g_setenv("GTK_CSD", "0", FALSE);
     g_setenv("GTK_DEBUG", "interactive", FALSE);
 
-    return app_main(argc, argv);
+    return app_main_run(argc, argv);
 }
 #endif
