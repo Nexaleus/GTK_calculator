@@ -1,15 +1,21 @@
 #ifndef _CALCULATOR_H_
 #define _CALCULATOR_H_
 
+//FORWARD DECL FOR GTK
+#include "gtk/gtk.h"
+#include <glib/gstdio.h>
+
 typedef enum {CSTATE_RESET, CSTATE_INPUT_OP1, CSTATE_INPUT_OPERAND, CSTATE_INPUT_OP2}CSTATE;
 
 typedef struct _Calculator Calculator;
 
 struct _Calculator
 {
-    //int a,b;
+    double op1,op2;
+    char operand; 
     CSTATE cState;
 };
 
+G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data);
 
 #endif
