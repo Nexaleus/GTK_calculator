@@ -4,14 +4,14 @@
 #include <gtk/gtk.h>
 #include <glib/gstdio.h> // Needed for g_build_filename
 #include <string.h>     // Needed for strcat
+#include "Calculator.h"
 
-
-struct MAIN_APPLICATION
+//typedef struct _mainApp mainApp;
+typedef struct 
 {
     GtkApplication *gtk_handle;
-
-
-} app;
+    Calculator *calc;
+} mainApp;
 
 
 G_MODULE_EXPORT void app_load_ui_from_file(GtkApplication *_app, const char* ui_file_name);

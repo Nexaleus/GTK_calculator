@@ -1,5 +1,5 @@
 #include "Application.h"
-
+#include <stdlib.h>
 
 //G_MODULE_EXPORT void (alternative CALLBACK function declaration when compiling for Windows)
 G_MODULE_EXPORT void app_load_ui_from_file(GtkApplication *_app, const char *ui_file_name)
@@ -125,14 +125,33 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
 
 G_MODULE_EXPORT int app_main_run(int argc, char **argv)
 {
-    app.gtk_handle = NULL;
+    mainApp *mApp = NULL;
+    mApp = (mainApp *)malloc(sizeof(mainApp));
+    if(!mApp)
+    {
+        fprintf(stderr, "Error: Failed to allocate memory for mainApp structure...\n");
+        return 1; // Indicate failure
+    }
 
-    app.gtk_handle = gtk_application_new("app.xorrcxrcx.calculator", G_APPLICATION_DEFAULT_FLAGS);
+    mApp->gtk_handle = NULL;
+    mApp->gtk_handle = gtk_application_new("app.xorrcxrcx.calculator", G_APPLICATION_DEFAULT_FLAGS);
+    mApp->calc = NULL;
+    mApp->calc = (Calculator *)malloc(sizeof(Calculator));
+    if(!mApp->calc)
+    {
+        fprintf(stderr, "Error: Failed to allocate memory for Calculator structure...\n");
+        return 1; // Indicate failure
+    }
 
-    g_signal_connect(app.gtk_handle, "activate", G_CALLBACK(app_activate_gtk), NULL);
+    mApp->calc->cState = CSTATE_RESET;
+    g_signal_connect(mApp->gtk_handle, "activate", G_CALLBACK(app_activate_gtk), NULL);
 
-    // Pass argc and argv to g_application_run
-    int status = g_application_run(G_APPLICATION(app.gtk_handle), argc, argv);
-    g_object_unref(app.gtk_handle);
+    //MAIN APP LOOP
+    int status = g_application_run(G_APPLICATION(mApp->gtk_handle), argc, argv);
+
+    //MEMORY DEALLOCATION
+    g_object_unref(mApp->gtk_handle);
+    free(mApp->calc);
+    free(mApp);
     return status;
 }
