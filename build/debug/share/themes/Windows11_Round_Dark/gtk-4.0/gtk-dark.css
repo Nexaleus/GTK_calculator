@@ -2,16 +2,14 @@
 
 /* Apply the font to ALL widgets */
 * {
-  /* Use the font-family name you defined above */
-  /* Include fallback fonts (like sans-serif) just in case */
   /*font-family: "Samsung Sharp Sans";*/
   /*font-family: "New SEC Keypad";*/
-  /* Optional: You can set a default font size here too */
+
   font-size: 14pt;
 }
 
 button.equals_btn {
-	background-image: image(rgba(73,73,73,0.90));
+	background-image: image(rgba(73,73,73,0.80));
 }
 
 /***************

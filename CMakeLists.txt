@@ -30,7 +30,7 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG /MD")
 # --- Target Definition ---2
 
 # Add the executable target
-add_executable(gtk_calculator src/main.c src/Application.c)
+add_executable(gtk_calculator src/main.c src/Application.c src/Calculator.c)
 
 # Link GTK4 to the executable
 target_link_libraries(gtk_calculator PUBLIC PkgConfig::GTK4)
