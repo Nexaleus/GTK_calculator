@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 //G_MODULE_EXPORT void (alternative CALLBACK function declaration when compiling for Windows)
-G_MODULE_EXPORT void app_load_ui_from_file(GtkApplication *_app, const char *ui_file_name)
+G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_name)
 {
     // GError *load_error = NULL;
     g_print("----------------------------------\nAttempting to load UI XML FILE: '%s'\n\n", ui_file_name);
@@ -30,7 +30,12 @@ G_MODULE_EXPORT void app_load_ui_from_file(GtkApplication *_app, const char *ui_
             GtkBuilder *builder = gtk_builder_new_from_file(absolute_path);
 
             GObject *appWindow = gtk_builder_get_object(builder, "app_window");
-            gtk_window_set_application(GTK_WINDOW(appWindow), _app);
+            gtk_window_set_application(GTK_WINDOW(appWindow), _mApp->gtk_handle);
+
+            GObject *button = gtk_builder_get_object(builder, "btn_add_or_sub");
+
+            //g_signal_connect(GTK_BUTTON(button),"clicked",G_CALLBACK())
+
 
             gtk_window_present(GTK_WINDOW(appWindow));
             g_object_unref(builder);
@@ -119,7 +124,14 @@ G_MODULE_EXPORT void app_load_theme_from_file(const char *theme_name, gboolean f
 
 G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
 {
-    app_load_ui_from_file(_app, "gtk_test.ui");
+    mainApp *_mApp = NULL;
+    _mApp = (mainApp *)user_data;
+    if(!_mApp)
+    {
+        g_error("INVALID TYPE CONVERSION TO MAINAPP POINTER");
+    }
+
+    app_load_ui_from_file(_mApp, "gtk_test.ui");
     app_load_theme_from_file("Windows11_Round_Dark", TRUE);
 }
 
@@ -129,8 +141,9 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
     mApp = (mainApp *)malloc(sizeof(mainApp));
     if(!mApp)
     {
-        fprintf(stderr, "Error: Failed to allocate memory for mainApp structure...\n");
-        return 1; // Indicate failure
+        /*fprintf(stderr, "Error: Failed to allocate memory for mainApp structure...\n");
+        return 1;*/ 
+        g_error("Failed to allocate memory for mainApp structure.");
     }
 
     mApp->gtk_handle = NULL;
@@ -139,12 +152,13 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
     mApp->calc = (Calculator *)malloc(sizeof(Calculator));
     if(!mApp->calc)
     {
-        fprintf(stderr, "Error: Failed to allocate memory for Calculator structure...\n");
-        return 1; // Indicate failure
+        /*fprintf(stderr, "Error: Failed to allocate memory for Calculator structure...\n");
+        return 1; // Indicate failure*/
+        g_error(" Failed to allocate memory for Calculator structure.");
     }
 
     mApp->calc->cState = CSTATE_RESET;
-    g_signal_connect(mApp->gtk_handle, "activate", G_CALLBACK(app_activate_gtk), NULL);
+    g_signal_connect(mApp->gtk_handle, "activate", G_CALLBACK(app_activate_gtk), mApp);
 
     //MAIN APP LOOP
     int status = g_application_run(G_APPLICATION(mApp->gtk_handle), argc, argv);

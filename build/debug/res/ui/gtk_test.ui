@@ -24,7 +24,7 @@
             <property name="row-spacing">2</property>
             <property name="vexpand">True</property>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_add_or_sub">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -38,7 +38,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_0">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -52,7 +52,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_decimal">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -66,7 +66,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_equals">
                 <property name="can-focus">False</property>
                 <property name="css-classes">equals_btn</property>
                 <property name="focus-on-click">False</property>
@@ -81,7 +81,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_1">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -95,7 +95,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_2">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -109,7 +109,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_3">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -123,7 +123,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_plus">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -137,7 +137,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_4">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -151,7 +151,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_5">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -165,7 +165,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_6">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -179,7 +179,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_minus">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -193,7 +193,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_7">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -207,7 +207,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_8">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -221,7 +221,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_9">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -235,7 +235,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_multiply">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -249,7 +249,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_divide">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -263,7 +263,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_clear_entry">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -277,7 +277,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_clear_all">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>
@@ -291,7 +291,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_back">
                 <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="focusable">False</property>

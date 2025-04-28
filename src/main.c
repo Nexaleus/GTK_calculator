@@ -1,12 +1,8 @@
 #include "Application.h"
 
+#if defined(_WIN32) && defined(NDEBUG)
 // Include windows.h only on Windows Release builds where WinMain is needed
-#if defined(_WIN32) && defined(NDEBUG)
 #include <windows.h>
-#endif
-
-
-#if defined(_WIN32) && defined(NDEBUG)
 // Windows Release entry point (uses WinMain, console hidden by linker flag)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     //g_application_run handles command line parsing on Windows when passed 0, NULL     
