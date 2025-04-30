@@ -17,7 +17,7 @@
             <property name="column-spacing">2</property>
             <property name="hexpand">True</property>
             <property name="margin-bottom">4</property>
-            <property name="margin-end">224</property>
+            <property name="margin-end">4</property>
             <property name="margin-start">4</property>
             <property name="margin-top">256</property>
             <property name="row-homogeneous">True</property>
@@ -306,6 +306,38 @@
             </child>
             <layout>
               <property name="column">0</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="entr_entry">
+            <property name="buffer">
+              <object class="GtkEntryBuffer" id="entr_buffer">
+                <property name="max-length">100</property>
+              </object>
+            </property>
+            <property name="can-target">False</property>
+            <property name="editable">False</property>
+            <property name="margin-bottom">128</property>
+            <property name="margin-end">4</property>
+            <property name="margin-start">4</property>
+            <property name="max-length">100</property>
+            <property name="placeholder-text">0</property>
+            <property name="valign">center</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="halign">center</property>
+            <property name="margin-end">226</property>
+            <property name="orientation">vertical</property>
+            <layout>
+              <property name="column">1</property>
               <property name="row">1</property>
             </layout>
           </object>

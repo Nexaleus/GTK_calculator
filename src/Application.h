@@ -10,6 +10,7 @@
 typedef struct 
 {
     GtkApplication *gtk_handle;
+    GtkEntry *entry_handle;
     Calculator *calc;
 } mainApp;
 

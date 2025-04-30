@@ -1,7 +1,6 @@
 #ifndef _CALCULATOR_H_
 #define _CALCULATOR_H_
 
-//FORWARD DECL FOR GTK
 #include "gtk/gtk.h"
 #include <glib/gstdio.h>
 
