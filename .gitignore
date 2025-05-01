@@ -16,7 +16,7 @@ res/custom-themeRRRRR.css
 /build/debug/res/*
 !/build/debug/res/ui
 /build/debug/res/ui/*
-!/build/debug/res/ui/gtk_test.ui
+!/build/debug/res/ui/UI_MAIN_libadwaita.ui
 
 ####################################################
 

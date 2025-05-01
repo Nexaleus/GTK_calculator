@@ -28,8 +28,8 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
         {
             GtkBuilder *builder = gtk_builder_new_from_file(absolute_path);
 
-            GObject *appWindow = gtk_builder_get_object(builder, "app_window");
-            gtk_window_set_application(GTK_WINDOW(appWindow), _mApp->gtk_handle);
+            GObject *appWindow = gtk_builder_get_object(builder, "app_adw_window");
+            gtk_window_set_application(GTK_WINDOW(appWindow), _mApp->adw_app_handle);
 
             _mApp->entry_handle = NULL;
             GObject *entry = gtk_builder_get_object(builder, "entr_entry");
@@ -191,8 +191,7 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
         g_error("INVALID TYPE CONVERSION TO MAINAPP POINTER");
     }
 
-    app_load_ui_from_file(_mApp, "gtk_test.ui");
-    app_load_theme_from_file("Windows11_Round_Dark", TRUE);
+    app_load_ui_from_file(_mApp, "UI_MAIN_libadwaita.ui");
 }
 
 G_MODULE_EXPORT int app_main_run(int argc, char **argv)
@@ -206,8 +205,8 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
         g_error("Failed to allocate memory for mainApp structure.");
     }    
     
-    mApp->gtk_handle = NULL;
-    mApp->gtk_handle = gtk_application_new("app.xorrcxrcx.calculator", G_APPLICATION_DEFAULT_FLAGS);
+    mApp->adw_app_handle = NULL;
+    mApp->adw_app_handle = adw_application_new("app.xorrcxrcx.calculator", G_APPLICATION_DEFAULT_FLAGS);
     mApp->calc = NULL;
     mApp->calc = (Calculator *)malloc(sizeof(Calculator));
     if(!mApp->calc)
@@ -218,13 +217,13 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
     }
     
     mApp->calc->cState = CSTATE_RESET;
-    g_signal_connect(mApp->gtk_handle, "activate", G_CALLBACK(app_activate_gtk), mApp);
+    g_signal_connect(mApp->adw_app_handle, "activate", G_CALLBACK(app_activate_gtk), mApp);
 
     //MAIN APP LOOP
-    int status = g_application_run(G_APPLICATION(mApp->gtk_handle), argc, argv);
+    int status = g_application_run(G_APPLICATION(mApp->adw_app_handle), argc, argv);
 
     //MEMORY DEALLOCATION
-    g_object_unref(mApp->gtk_handle);
+    g_object_unref(mApp->adw_app_handle);
     free(mApp->calc);
     free(mApp);
     return status;

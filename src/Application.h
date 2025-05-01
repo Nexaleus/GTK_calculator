@@ -4,12 +4,12 @@
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
 #include <string.h>
+#include "libadwaita-1/adwaita.h"
 #include "Calculator.h"
 
-//typedef struct _mainApp mainApp;
 typedef struct 
 {
-    GtkApplication *gtk_handle;
+    AdwApplication *adw_app_handle;
     GtkEntry *entry_handle;
     Calculator *calc;
 } mainApp;
