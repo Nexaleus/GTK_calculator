@@ -13,19 +13,11 @@ res/custom-themeRRRRR.css
 !/build/debug
 /build/debug/*
 !/build/debug/res
-!/build/debug/share
 /build/debug/res/*
-/build/debug/share/*
 !/build/debug/res/ui
-!/build/debug/share/themes
 /build/debug/res/ui/*
-/build/debug/share/themes/*
 !/build/debug/res/ui/gtk_test.ui
-!/build/debug/share/themes/Windows11_Round_Dark
-/build/debug/share/themes/Windows11_Round_Dark/*
-!/build/debug/share/themes/Windows11_Round_Dark/gtk-4.0
-/build/debug/share/themes/Windows11_Round_Dark/gtk-4.0/*
-!/build/debug/share/themes/Windows11_Round_Dark/gtk-4.0/gtk-dark.css
+
 
 ####################################################
 
