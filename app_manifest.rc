@@ -1,1 +1,39 @@
+#include <windows.h>
 #include <winver.h>
+
+#define IDI_MYICON 102
+
+IDI_MYICON   ICON    "differ_icon.ico"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     1,0,0,1
+PRODUCTVERSION  1,0,0,0
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+FILEFLAGS       VS_FF_DEBUG
+#else
+FILEFLAGS       0x0L
+#endif
+FILEOS          VOS__WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0" // Language ID: U.S. English, Character Set: Unicode
+        BEGIN
+            VALUE "CompanyName",      "xorrcxrcx\0"
+            VALUE "FileDescription",  "GTK Calculator\0"
+            VALUE "FileVersion",      "1.0.0.1\0"
+            VALUE "InternalName",     "gtk_calculator.exe\0"
+            VALUE "LegalCopyright",   "Copyright (C) 2025 xor rcxrcx\0"
+            VALUE "OriginalFilename", "gtk_calculator.exe\0"
+            VALUE "ProductName",      "GTK Calculator\0"
+            VALUE "ProductVersion",   "1.0.0\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200 // Language ID: U.S. English, Character Set: Unicode
+    END
+END
