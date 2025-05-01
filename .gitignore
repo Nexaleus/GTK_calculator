@@ -5,6 +5,7 @@ res/themeRes/gtk-4.0/gtk.css
 res/custom-theme.css
 res/custom-themeRRRRR.css
 /diagrams/*
+/reference/*
 
 #IGNORING THE WHOLE BUILD DIRECTORY EXCEPT TWO FILES
 

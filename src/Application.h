@@ -2,8 +2,8 @@
 #define _APPLICATION_H_
 
 #include <gtk/gtk.h>
-#include <glib/gstdio.h> // Needed for g_build_filename
-#include <string.h>     // Needed for strcat
+#include <glib/gstdio.h>
+#include <string.h>
 #include "Calculator.h"
 
 //typedef struct _mainApp mainApp;

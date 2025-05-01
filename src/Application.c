@@ -1,10 +1,9 @@
 #include "Application.h"
 #include <stdlib.h>
 
-//G_MODULE_EXPORT void (alternative CALLBACK function declaration when compiling for Windows)
+
 G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_name)
 {
-    // GError *load_error = NULL;
     g_print("----------------------------------\nAttempting to load UI XML FILE: '%s'\n\n", ui_file_name);
     gchar *relative_path = NULL;
     gchar *absolute_path = NULL;
@@ -37,7 +36,7 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             _mApp->entry_handle = GTK_ENTRY(entry);
 
             //CONNECTING CALC BUTTON CALLBACKS
-            GObject *button = gtk_builder_get_object(builder, "btn_add_or_sub");
+            GObject *button = gtk_builder_get_object(builder, "btn_percent");
             g_signal_connect(GTK_BUTTON(button),"clicked",G_CALLBACK(calc_on_button_click),_mApp);
 
             button = gtk_builder_get_object(builder, "btn_0");
