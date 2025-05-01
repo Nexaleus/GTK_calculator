@@ -18,7 +18,6 @@ res/custom-themeRRRRR.css
 /build/debug/res/ui/*
 !/build/debug/res/ui/gtk_test.ui
 
-
 ####################################################
 
 GTK_calculator.code-workspace

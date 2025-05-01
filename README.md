@@ -80,4 +80,4 @@ Contributions are welcome! Please open an issue or submit a pull request. (Consi
 
 ## License
 
-(No license file was provided. Add a LICENSE file to your repository and specify the license here, e.g., MIT, GPLv3, etc.)
+This project is licensed under the [LGPL-3.0-or-later](https://spdx.org/licenses/LGPL-3.0-or-later.html) - see the [LICENSE](LICENSE) file for details.
