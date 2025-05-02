@@ -2,7 +2,7 @@
 
 A simple calculator application built with the GTK4 toolkit in C.
 
-![GTK Calculator Screenshot](calc_screenshot.png)
+![GTK Calculator Screenshot](calc_screenshot2.png)
 
 ## Features
 

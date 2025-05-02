@@ -23,8 +23,10 @@ res/custom-themeRRRRR.css
 GTK_calculator.code-workspace
 CMakeUserPresets.json
 gtk_calc_setup_wizard.iss
+gtk_calc_setup_wizard_LIBADWAITA.iss
 
 gtk_ui_reference.png
 gtk_test_DONT_LOAD.ui
 
 main_icon.ico
+calc_screenshot.png
