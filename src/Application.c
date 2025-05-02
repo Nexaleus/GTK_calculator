@@ -31,10 +31,10 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
         {
             GtkBuilder *builder = gtk_builder_new_from_file(absolute_path);
 
-            GObject *appWindow = gtk_builder_get_object(builder, "app_adw_window");
-            gtk_window_set_application(GTK_WINDOW(appWindow), _mApp->adw_app_handle);
+            GObject *appWindow = gtk_builder_get_object(builder, "main_window");
+            gtk_window_set_application(GTK_APPLICATION_WINDOW(appWindow), _mApp->adw_app_handle);
 
-            _mApp->entry_handle = NULL;
+            /*_mApp->entry_handle = NULL;
             GObject *entry = gtk_builder_get_object(builder, "entr_entry");
             _mApp->entry_handle = GTK_ENTRY(entry);
 
@@ -97,10 +97,10 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
 
             button = gtk_builder_get_object(builder, "btn_back");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);*/
             //------------------------------------------------------------------------------------
 
-            gtk_window_present(GTK_WINDOW(appWindow));
+            gtk_window_present(GTK_APPLICATION_WINDOW(appWindow));
             g_object_unref(builder);
         }
         else
@@ -194,7 +194,7 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
         g_error("INVALID TYPE CONVERSION TO MAINAPP POINTER");
     }
 
-    app_load_ui_from_file(_mApp, "UI_MAIN_libadwaita.ui");
+    app_load_ui_from_file(_mApp, "gtk_new_UI_layout.ui");
 }
 
 G_MODULE_EXPORT int app_main_run(int argc, char **argv)
@@ -208,6 +208,7 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
         g_error("Failed to allocate memory for mainApp structure.");
     }
 
+    //adw_init();
     mApp->adw_app_handle = NULL;
     mApp->adw_app_handle = adw_application_new("app.xorrcxrcx.calculator", G_APPLICATION_DEFAULT_FLAGS);
     mApp->calc = NULL;
