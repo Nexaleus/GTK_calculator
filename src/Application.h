@@ -10,7 +10,8 @@
 typedef struct 
 {
     AdwApplication *adw_app_handle;
-    GtkEntry *entry_handle;
+    //GtkEntry *entry_handle;
+    GtkLabel *label_handle;
     Calculator *calc;
 } mainApp;
 

@@ -18,7 +18,7 @@ G_MODULE_EXPORT double perform_calculation(Calculator *calc)
     case '/':
         if (calc->op2 == 0)
         {
-            g_warning("Division by zero attempted.");
+            g_warning("Division by zero attempted.\n");
             // Handle error appropriately - maybe return NaN or display "Error"
             // For now, just return 0 and reset state
             calc->cState = CSTATE_RESET;
@@ -32,34 +32,59 @@ G_MODULE_EXPORT double perform_calculation(Calculator *calc)
     }
 }
 
-G_MODULE_EXPORT void update_display(GtkEntry *entry, const char *text)
+G_MODULE_EXPORT void update_display(GtkLabel *_label, const char *text)
 {
-    GtkEntryBuffer *buffer = gtk_entry_get_buffer(entry);
-    gtk_entry_buffer_set_text(buffer, text, -1);
+    gtk_label_set_text(GTK_LABEL(_label),text);
 }
 
-G_MODULE_EXPORT void append_to_display(GtkEntry *entry, const char *text)
+G_MODULE_EXPORT void append_to_display(GtkLabel *_label, const char *text_to_append)
 {
-    GtkEntryBuffer *buffer = gtk_entry_get_buffer(entry);
-    gtk_entry_buffer_insert_text(buffer, gtk_entry_buffer_get_length(buffer), text, -1);
+    const char *current_text = gtk_label_get_text(GTK_LABEL(_label));
+    gsize current_len = strlen(current_text);
+    gsize append_len = strlen(text_to_append);
+    // Calculate total size needed: current length + append length + 1 (for null terminator)
+    gsize total_size = current_len + append_len + 1;
+
+    // Allocate memory for the new combined string
+    char *new_text_buffer = g_malloc(total_size);
+    if (!new_text_buffer)
+    {
+        g_error("Failed to allocate memory in append_to_display");
+        // Allocation failed, cannot proceed
+    }
+
+    // Copy the current text into the new buffer first.
+    // Using strcpy here is safe because we allocated exactly enough space initially.
+    strcpy(new_text_buffer, current_text);
+
+    // Append the new text using g_strlcat for safety.
+    // g_strlcat ensures null termination and prevents buffer overflows.
+    // The third argument is the total size of the destination buffer.
+    g_strlcat(new_text_buffer, text_to_append, total_size);
+
+    // Update the label with the newly created string
+    gtk_label_set_text(GTK_LABEL(_label), new_text_buffer);
+
+    // Free the memory allocated by g_malloc
+    g_free(new_text_buffer);
 }
 
 G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
 {
     mainApp *mApp = NULL;
     mApp = (mainApp *)user_data;
-    if (!mApp || !mApp->calc || !mApp->entry_handle)
+    if (!mApp || !mApp->calc || !mApp->label_handle)
     {
         g_error("MAINAPP POINTER IS NULL\n");
     }
 
     Calculator *calc = mApp->calc;
-    GtkEntry *entry = GTK_ENTRY(mApp->entry_handle);
+    GtkLabel *display_label = GTK_LABEL(mApp->label_handle);
 
     if (GTK_IS_BUTTON(button) && gtk_button_get_label(GTK_BUTTON(button)) != NULL)
     {
         const char *label = gtk_button_get_label(GTK_BUTTON(button));
-        const char *current_text = gtk_entry_buffer_get_text(gtk_entry_get_buffer(entry));
+        const char *current_text = gtk_label_get_text(display_label);
         char display_buffer[100]; // For formatting results
         double current_value;
 
@@ -72,6 +97,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
         {
             // Handle cases like empty string or invalid input if necessary
             // For simplicity, we often assume the display holds a valid number or "0"
+            g_warning("INVALID INPUT!\n");
         }
 
         // --- Clear Button ---
@@ -81,7 +107,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
             calc->op2 = 0.0;
             calc->operand = '\0';
             calc->cState = CSTATE_RESET;
-            update_display(entry, "0");
+            update_display(display_label, "0");
         }
         // --- Digit or Decimal Point ---
         else if (isdigit(label[0]) || (strcmp(label, ".") == 0))
@@ -99,7 +125,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 // Special case: if state is RESET or OPERAND, start with "0."
                 if (calc->cState == CSTATE_RESET || calc->cState == CSTATE_INPUT_OPERAND)
                 {
-                    update_display(entry, "0.");
+                    update_display(display_label, "0.");
                     calc->cState = (calc->cState == CSTATE_RESET) ? CSTATE_INPUT_OP1 : CSTATE_INPUT_OP2;
                     return;
                 }
@@ -108,33 +134,33 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
             switch (calc->cState)
             {
             case CSTATE_RESET:                // Starting fresh or after '=' or 'C'
-                update_display(entry, label); // Start new number
+                update_display(display_label, label); // Start new number
                 calc->cState = CSTATE_INPUT_OP1;
                 break;
             case CSTATE_INPUT_OP1:
                 // Handle initial "0" - replace if not entering decimal
                 if (strcmp(current_text, "0") == 0 && strcmp(label, ".") != 0)
                 {
-                    update_display(entry, label);
+                    update_display(display_label, label);
                 }
                 else
                 {
-                    append_to_display(entry, label);
+                    append_to_display(display_label, label);
                 }
                 break;
             case CSTATE_INPUT_OPERAND: // Just received an operator, start op2
-                update_display(entry, label);
+                update_display(display_label, label);
                 calc->cState = CSTATE_INPUT_OP2;
                 break;
             case CSTATE_INPUT_OP2:
                 // Handle initial "0" for op2 - replace if not entering decimal
                 if (strcmp(current_text, "0") == 0 && strcmp(label, ".") != 0)
                 {
-                    update_display(entry, label);
+                    update_display(display_label, label);
                 }
                 else
                 {
-                    append_to_display(entry, label);
+                    append_to_display(display_label, label);
                 }
                 break;
             }
@@ -168,7 +194,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 calc->cState = CSTATE_INPUT_OPERAND;   // Ready for next op2
                 // Display the intermediate result
                 snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1); // %g removes trailing zeros
-                update_display(entry, display_buffer);
+                update_display(display_label, display_buffer);
                 break;
             }
         }
@@ -187,7 +213,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 calc->op1 = perform_calculation(calc);
                 // Display result
                 snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1);
-                update_display(entry, display_buffer);
+                update_display(display_label, display_buffer);
                 // Keep operand, allow repeated equals. State becomes RESET,
                 // next number will overwrite display and become new op1.
                 calc->cState = CSTATE_RESET;
@@ -197,7 +223,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 calc->op1 = perform_calculation(calc); // Result stored in op1
                 // Display result
                 snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1);
-                update_display(entry, display_buffer);
+                update_display(display_label, display_buffer);
                 // Reset state, ready for new calculation. Op1 holds result.
                 // Operand is cleared or kept depending on desired behavior for repeated equals.
                 // Let's clear it to match simple calculators.
