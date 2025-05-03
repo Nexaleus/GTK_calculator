@@ -1,3 +1,7 @@
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
+
 #include "Calculator.h"
 #include "gtk/gtk.h"
 #include "Application.h"
@@ -238,14 +242,45 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 break;
             }
         }
+        // --- Backspace Button ---
+        else if (strcmp(label, "←") == 0)
+        {
+            if (calc->cState == CSTATE_INPUT_OP1 || calc->cState == CSTATE_INPUT_OP2)
+            {
+                gsize current_len = strlen(current_text);
+
+                if (current_len > 1)
+                {
+                    // Create a mutable copy, remove the last char, update display
+                    char *buffer = g_strdup(current_text);
+                    if (buffer)
+                    {                                   // Check if g_strdup succeeded
+                        buffer[current_len - 1] = '\0'; // Truncate the string
+                        update_display(display_label, buffer);
+                        g_free(buffer);
+                    }
+                    else
+                    {
+                        g_warning("Failed to allocate memory for backspace operation.\n");
+                    }
+                }
+                else if (current_len == 1 && current_text[0] != '0')
+                {
+                    // If only one digit is left (and it's not '0'), change display to "0"
+                    update_display(display_label, "0");
+                }
+                // If current_len is 0 or (len is 1 and text is "0"), do nothing.
+            }
+            // g_message("Button: '←' was clicked!\n");
+        }
         // --- Other Buttons (e.g., +/- , %, etc. - Not implemented) ---
         else
         {
-            g_message("Button '%s' not implemented yet.", label);
+            g_message("Button '%s' not implemented yet.\n", label);
         }
     }
     else
     {
-        g_warning("Clicked widget is not a button or has no label.");
+        g_warning("Clicked widget is not a button or has no label.\n");
     }
 }
