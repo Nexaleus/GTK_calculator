@@ -25,6 +25,21 @@
           </object>
         </child>
         <child>
+          <object class="GtkLabel" id="preview_display">
+            <property name="halign">end</property>
+            <property name="label">0</property>
+            <property name="margin-end">8</property>
+            <property name="margin-top">28</property>
+            <property name="valign">end</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 10"/>
+            </attributes>
+            <style>
+              <class name="dim-label"/>
+            </style>
+          </object>
+        </child>
+        <child>
           <object class="GtkLabel" id="display_label">
             <property name="halign">end</property>
             <property name="hexpand">true</property>
@@ -32,11 +47,9 @@
             <property name="margin-bottom">8</property>
             <property name="margin-end">8</property>
             <property name="margin-start">8</property>
-            <property name="margin-top">50</property>
             <property name="selectable">true</property>
             <property name="single-line-mode">True</property>
-            <property name="valign">center</property>
-            <property name="vexpand">false</property>
+            <property name="valign">start</property>
             <property name="xalign">1.0</property>
             <attributes>
               <attribute name="font-desc" value="Sans Bold 24"/>
@@ -47,11 +60,11 @@
         <child>
           <object class="GtkGrid" id="button_grid">
             <property name="column-spacing">4</property>
-            <property name="hexpand">true</property>
+            <property name="hexpand">True</property>
             <property name="margin-end">8</property>
             <property name="margin-start">8</property>
             <property name="row-spacing">4</property>
-            <property name="vexpand">true</property>
+            <property name="vexpand">True</property>
             <child>
               <object class="GtkButton" id="button_clear">
                 <property name="hexpand">true</property>

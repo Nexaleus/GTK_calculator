@@ -34,12 +34,16 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             GObject *appWindow = gtk_builder_get_object(builder, "main_window");
             gtk_window_set_application(GTK_APPLICATION_WINDOW(appWindow), _mApp->adw_app_handle);
 
+            //INITIALIZING LABELS
             _mApp->label_handle = NULL;
             GObject *display_label = gtk_builder_get_object(builder,"display_label");
             _mApp->label_handle = GTK_LABEL(display_label);
 
-            // CONNECTING CALC BUTTON CALLBACKS
+            _mApp->label_preview = NULL;
+            GObject *preview_label = gtk_builder_get_object(builder,"preview_display");
+            _mApp->label_preview = GTK_LABEL(preview_label);
 
+            //CONNECTING CALC BUTTON CALLBACKS
             GObject *button = NULL;
             button = gtk_builder_get_object(builder,"button_clear");
             g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
@@ -93,8 +97,7 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
             
             button = gtk_builder_get_object(builder,"button_decimal");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);         
             //------------------------------------------------------------------------------------
 
             gtk_window_present(GTK_APPLICATION_WINDOW(appWindow));

@@ -11,7 +11,7 @@
 
 G_MODULE_EXPORT double perform_calculation(Calculator *calc)
 {
-    switch (calc->operand)
+    switch (calc->operator)
     {
     case '+':
         return calc->op1 + calc->op2;
@@ -30,7 +30,7 @@ G_MODULE_EXPORT double perform_calculation(Calculator *calc)
         }
         return calc->op1 / calc->op2;
     default:
-        g_warning("Invalid operand '%c'", calc->operand);
+        g_warning("Invalid operator '%c'", calc->operator);
         calc->cState = CSTATE_RESET;
         return 0.0; // Should not happen
     }
@@ -84,12 +84,15 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
 
     Calculator *calc = mApp->calc;
     GtkLabel *display_label = GTK_LABEL(mApp->label_handle);
+    GtkLabel *preview_label = GTK_LABEL(mApp->label_preview);
 
     if (GTK_IS_BUTTON(button) && gtk_button_get_label(GTK_BUTTON(button)) != NULL)
     {
         const char *label = gtk_button_get_label(GTK_BUTTON(button));
         const char *current_text = gtk_label_get_text(display_label);
+        const char *preview_text = gtk_label_get_text(preview_label);
         char display_buffer[100]; // For formatting results
+        char preview_buffer[100];
         double current_value;
 
         // Attempt to parse the current display value
@@ -109,9 +112,10 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
         { 
             calc->op1 = 0.0;
             calc->op2 = 0.0;
-            calc->operand = '\0';
+            calc->operator = '\0';
             calc->cState = CSTATE_RESET;
             update_display(display_label, "0");
+            update_display(preview_label, "0");
         }
         // --- Digit or Decimal Point ---
         else if (isdigit(label[0]) || (strcmp(label, ".") == 0))
@@ -127,7 +131,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                     return; // Already has a decimal point in the current input
                 }
                 // Special case: if state is RESET or OPERAND, start with "0."
-                if (calc->cState == CSTATE_RESET || calc->cState == CSTATE_INPUT_OPERAND)
+                if (calc->cState == CSTATE_RESET || calc->cState == CSTATE_INPUT_OPERATOR)
                 {
                     update_display(display_label, "0.");
                     calc->cState = (calc->cState == CSTATE_RESET) ? CSTATE_INPUT_OP1 : CSTATE_INPUT_OP2;
@@ -139,6 +143,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
             {
             case CSTATE_RESET:                // Starting fresh or after '=' or 'C'
                 update_display(display_label, label); // Start new number
+                update_display(preview_label, "0");
                 calc->cState = CSTATE_INPUT_OP1;
                 break;
             case CSTATE_INPUT_OP1:
@@ -152,7 +157,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                     append_to_display(display_label, label);
                 }
                 break;
-            case CSTATE_INPUT_OPERAND: // Just received an operator, start op2
+            case CSTATE_INPUT_OPERATOR: // Just received an operator, start op2
                 update_display(display_label, label);
                 calc->cState = CSTATE_INPUT_OP2;
                 break;
@@ -172,30 +177,59 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
         // --- Operator Buttons ---
         else if (strchr("+-*/", label[0]) && strlen(label) == 1)
         {
-            char new_operand = label[0];
+            char new_operator = label[0];
             switch (calc->cState)
             {
             case CSTATE_RESET:   // Treat value 0 as op1 if operator pressed first
                 calc->op1 = 0.0; // Or maybe use value 0 from display? Let's use 0.
-                calc->operand = new_operand;
-                calc->cState = CSTATE_INPUT_OPERAND;
+                calc->operator = new_operator;
+                calc->cState = CSTATE_INPUT_OPERATOR;
                 // Display remains "0"
                 break;
             case CSTATE_INPUT_OP1: // First operand entered, store it and the operator
                 calc->op1 = current_value;
-                calc->operand = new_operand;
-                calc->cState = CSTATE_INPUT_OPERAND;
+                calc->operator = new_operator;
+                calc->cState = CSTATE_INPUT_OPERATOR;
+
+                //PREVIEW DISPLAY UPDATE
+                snprintf(preview_buffer, sizeof(preview_buffer), "%g", calc->op1); // %g removes trailing zeros
+                update_display(preview_label, preview_buffer);
+                //char* oper_string = label[0];
+                //append_to_display(preview_label, oper_string);
+
+                char op_str[2];
+                op_str[0] = new_operator; op_str[1] = '\0';
+                append_to_display(preview_label, op_str);
                 // Display doesn't change yet, waiting for op2
                 break;
-            case CSTATE_INPUT_OPERAND: // Operator pressed again, just update the operator
-                calc->operand = new_operand;
+            case CSTATE_INPUT_OPERATOR: // Operator pressed again, just update the operator
+                if (calc->operator != new_operator)
+                {
+                    calc->operator = new_operator;
+                    // PREVIEW DISPLAY UPDATE
+                    gsize current_len = strlen(preview_text);
+                    char *buffer = g_strdup(preview_text);
+                    if (buffer)
+                    {                                   // Check if g_strdup succeeded
+                        buffer[current_len - 1] = '\0'; // Truncate the string
+                        update_display(preview_label, buffer);
+                        char op_str[2];
+                        op_str[0] = new_operator; op_str[1] = '\0';
+                        append_to_display(preview_label, op_str);
+                        g_free(buffer);
+                    }
+                    else
+                    {
+                        g_warning("Failed to allocate memory for backspace operation.\n");
+                    }
+                }
                 // State remains CSTATE_INPUT_OPERAND
                 break;
             case CSTATE_INPUT_OP2: // Second operand entered, calculate intermediate result
                 calc->op2 = current_value;
                 calc->op1 = perform_calculation(calc); // Result becomes new op1
-                calc->operand = new_operand;           // Store the NEW operator
-                calc->cState = CSTATE_INPUT_OPERAND;   // Ready for next op2
+                calc->operator = new_operator;           // Store the NEW operator
+                calc->cState = CSTATE_INPUT_OPERATOR;   // Ready for next op2
                 // Display the intermediate result
                 snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1); // %g removes trailing zeros
                 update_display(display_label, display_buffer);
@@ -211,23 +245,42 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
             case CSTATE_INPUT_OP1:
                 // Do nothing, no calculation pending involving a second operand
                 break;
-            case CSTATE_INPUT_OPERAND:
+            case CSTATE_INPUT_OPERATOR:
                 // Interpret as op1 operand op1 (e.g., 5 + = -> 10)
                 calc->op2 = calc->op1; // Use op1 as op2
                 calc->op1 = perform_calculation(calc);
                 // Display result
                 snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1);
                 update_display(display_label, display_buffer);
+
+
+                //PREVIEW DISPLAY UPDATE
+                //snprintf(preview_buffer, sizeof(preview_buffer), "%g", calc->op2, calc->operator, calc->op2,"="); // %g removes trailing zeros
+                snprintf(preview_buffer, sizeof(preview_buffer), "%g", calc->op2);
+                update_display(preview_label, preview_buffer);
+                char op_str[2];
+                op_str[0] = calc->operator; op_str[1] = '\0';
+                append_to_display(preview_label,op_str);        
+                append_to_display(preview_label,preview_buffer);
+                append_to_display(preview_label,"="); 
+
                 // Keep operand, allow repeated equals. State becomes RESET,
                 // next number will overwrite display and become new op1.
                 calc->cState = CSTATE_RESET;
                 break;
             case CSTATE_INPUT_OP2: // Standard calculation
                 calc->op2 = current_value;
+                //double temp_op1 = calc->op1;
                 calc->op1 = perform_calculation(calc); // Result stored in op1
                 // Display result
                 snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1);
                 update_display(display_label, display_buffer);
+
+                //PREVIEW DISPLAY UPDATE
+                snprintf(preview_buffer, sizeof(preview_buffer), "%g", calc->op2);
+                append_to_display(preview_label, preview_buffer);
+                append_to_display(preview_label,"=");
+
                 // Reset state, ready for new calculation. Op1 holds result.
                 // Operand is cleared or kept depending on desired behavior for repeated equals.
                 // Let's clear it to match simple calculators.

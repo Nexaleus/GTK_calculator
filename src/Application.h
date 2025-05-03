@@ -11,7 +11,7 @@ typedef struct
 {
     AdwApplication *adw_app_handle;
     GtkLabel *label_handle;
-    //GtkLabel *label_full_op_display;
+    GtkLabel *label_preview;
     Calculator *calc;
 } mainApp;
 
