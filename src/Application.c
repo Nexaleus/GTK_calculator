@@ -31,76 +31,73 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
         {
             GtkBuilder *builder = gtk_builder_new_from_file(absolute_path);
 
-            GObject *appWindow = gtk_builder_get_object(builder, "app_adw_window");
-            gtk_window_set_application(GTK_WINDOW(appWindow), _mApp->adw_app_handle);
+            GObject *appWindow = gtk_builder_get_object(builder, "main_window");
+            gtk_window_set_application(GTK_APPLICATION_WINDOW(appWindow), _mApp->adw_app_handle);
 
-            _mApp->entry_handle = NULL;
-            GObject *entry = gtk_builder_get_object(builder, "entr_entry");
-            _mApp->entry_handle = GTK_ENTRY(entry);
+            _mApp->label_handle = NULL;
+            GObject *display_label = gtk_builder_get_object(builder,"display_label");
+            _mApp->label_handle = GTK_LABEL(display_label);
 
             // CONNECTING CALC BUTTON CALLBACKS
-            GObject *button = gtk_builder_get_object(builder, "btn_percent");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
 
-            button = gtk_builder_get_object(builder, "btn_0");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+            GObject *button = NULL;
+            button = gtk_builder_get_object(builder,"button_clear");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
 
-            button = gtk_builder_get_object(builder, "btn_decimal");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+            button = gtk_builder_get_object(builder,"button_backspace");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
 
-            button = gtk_builder_get_object(builder, "btn_equals");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+            button = gtk_builder_get_object(builder,"button_divide");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_multiply");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_7");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_8");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_9");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_subtract");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_4");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_5");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_6");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_add");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_1");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_2");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_3");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_equals");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
 
-            button = gtk_builder_get_object(builder, "btn_1");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_2");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_3");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_plus");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_4");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_5");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_6");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_minus");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_7");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_8");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_9");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_multiply");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_divide");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_clear_entry");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_clear_all");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
-
-            button = gtk_builder_get_object(builder, "btn_back");
-            g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+            button = gtk_builder_get_object(builder,"button_0");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
+            button = gtk_builder_get_object(builder,"button_decimal");
+            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            
             //------------------------------------------------------------------------------------
 
-            gtk_window_present(GTK_WINDOW(appWindow));
+            gtk_window_present(GTK_APPLICATION_WINDOW(appWindow));
             g_object_unref(builder);
         }
         else
@@ -194,7 +191,7 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
         g_error("INVALID TYPE CONVERSION TO MAINAPP POINTER");
     }
 
-    app_load_ui_from_file(_mApp, "UI_MAIN_libadwaita.ui");
+    app_load_ui_from_file(_mApp, "gtk_new_UI_layout.ui");
 }
 
 G_MODULE_EXPORT int app_main_run(int argc, char **argv)
@@ -208,6 +205,7 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
         g_error("Failed to allocate memory for mainApp structure.");
     }
 
+    //adw_init();
     mApp->adw_app_handle = NULL;
     mApp->adw_app_handle = adw_application_new("app.xorrcxrcx.calculator", G_APPLICATION_DEFAULT_FLAGS);
     mApp->calc = NULL;

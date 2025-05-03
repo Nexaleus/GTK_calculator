@@ -31,6 +31,7 @@
             <property name="column-homogeneous">True</property>
             <property name="column-spacing">2</property>
             <property name="hexpand">True</property>
+            <property name="margin-bottom">4</property>
             <property name="margin-end">4</property>
             <property name="margin-start">4</property>
             <property name="row-homogeneous">True</property>
