@@ -177,6 +177,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
         // --- Operator Buttons ---
         else if (strchr("+-*/", label[0]) && strlen(label) == 1)
         {
+            char op_str[2];
             char new_operator = label[0];
             switch (calc->cState)
             {
@@ -197,7 +198,6 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 //char* oper_string = label[0];
                 //append_to_display(preview_label, oper_string);
 
-                char op_str[2];
                 op_str[0] = new_operator; op_str[1] = '\0';
                 append_to_display(preview_label, op_str);
                 // Display doesn't change yet, waiting for op2
@@ -213,7 +213,6 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                     {                                   // Check if g_strdup succeeded
                         buffer[current_len - 1] = '\0'; // Truncate the string
                         update_display(preview_label, buffer);
-                        char op_str[2];
                         op_str[0] = new_operator; op_str[1] = '\0';
                         append_to_display(preview_label, op_str);
                         g_free(buffer);
@@ -228,11 +227,17 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
             case CSTATE_INPUT_OP2: // Second operand entered, calculate intermediate result
                 calc->op2 = current_value;
                 calc->op1 = perform_calculation(calc); // Result becomes new op1
-                calc->operator = new_operator;           // Store the NEW operator
-                calc->cState = CSTATE_INPUT_OPERATOR;   // Ready for next op2
+                calc->operator = new_operator;         // Store the NEW operator
+                calc->cState = CSTATE_INPUT_OPERATOR;  // Ready for next op2
                 // Display the intermediate result
                 snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1); // %g removes trailing zeros
                 update_display(display_label, display_buffer);
+
+                // PREVIEW DISPLAY UPDATE
+                update_display(preview_label, gtk_label_get_text(display_label));
+                op_str[0] = new_operator;
+                op_str[1] = '\0';
+                append_to_display(preview_label, op_str);
                 break;
             }
         }
