@@ -36,7 +36,7 @@ G_MODULE_EXPORT void app_menu_about_activated(GSimpleAction *action, GVariant *p
     adw_about_window_set_version(ADW_ABOUT_WINDOW(about_window), "1.2.1");
     adw_about_window_set_developer_name(ADW_ABOUT_WINDOW(about_window), "Xor Rcxrcx");
     adw_about_window_set_developers(ADW_ABOUT_WINDOW(about_window), developers);
-    adw_about_window_set_copyright(ADW_ABOUT_WINDOW(about_window), "© 2023 Xor Rcxrcx");
+    adw_about_window_set_copyright(ADW_ABOUT_WINDOW(about_window), "© 2025 Xor Rcxrcx");
     adw_about_window_set_license_type(ADW_ABOUT_WINDOW(about_window), GTK_LICENSE_LGPL_3_0);
     adw_about_window_set_application_icon(ADW_ABOUT_WINDOW(about_window), "gnome-calculator-symbolic");
     gtk_window_set_transient_for(GTK_WINDOW(about_window), GTK_WINDOW(_mApp->main_window));
@@ -364,6 +364,7 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
     }
 
     mApp->calc->cState = CSTATE_RESET;
+    mApp->calc->just_calculated = FALSE;
     mApp->global_font_size = 11;
     g_signal_connect(mApp->adw_app_handle, "activate", G_CALLBACK(app_activate_gtk), mApp);
 

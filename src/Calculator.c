@@ -158,7 +158,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 }
                 break;
             case CSTATE_INPUT_OPERATOR: // Just received an operator, start op2
-                update_display(display_label, label);
+                update_display(display_label, label); ///DO SOMETHING HERE!!!!!!!!!!!!!!!
                 calc->cState = CSTATE_INPUT_OP2;
                 break;
             case CSTATE_INPUT_OP2:
@@ -285,13 +285,19 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 snprintf(preview_buffer, sizeof(preview_buffer), "%g", calc->op2);
                 append_to_display(preview_label, preview_buffer);
                 append_to_display(preview_label,"=");
-
+                
                 // Reset state, ready for new calculation. Op1 holds result.
                 // Operand is cleared or kept depending on desired behavior for repeated equals.
                 // Let's clear it to match simple calculators.
                 // Keep op1 so result can be used in next calculation.
                 // Keep op2 for repeated equals press.
-                calc->cState = CSTATE_RESET; // Ready for new op1 entry
+
+                /*calc->operator = '\0';
+                calc->op2 = 0.0;
+                calc->cState = CSTATE_INPUT_OPERATOR; // Ready for new op1 entry
+                calc->just_calculated = TRUE;*/
+                calc->cState = CSTATE_RESET;
+
                 // To allow repeated equals (e.g., 2 * 3 = = = -> 6, 18, 54)
                 // we need to keep the last operand and op2, but the state becomes
                 // something like CSTATE_RESULT. For simplicity, CSTATE_RESET is used here,

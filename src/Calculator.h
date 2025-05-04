@@ -13,6 +13,7 @@ struct _Calculator
     double op1,op2;
     char operator; 
     CSTATE cState;
+    gboolean just_calculated;
 };
 
 G_MODULE_EXPORT double perform_calculation(Calculator *calc);
