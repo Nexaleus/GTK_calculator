@@ -77,7 +77,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
 {
     mainApp *mApp = NULL;
     mApp = (mainApp *)user_data;
-    if (!mApp || !mApp->calc || !mApp->label_handle)
+    if (!mApp || !mApp->calc || !mApp->label_handle || !mApp->label_preview)
     {
         g_error("MAINAPP POINTER IS NULL\n");
     }
