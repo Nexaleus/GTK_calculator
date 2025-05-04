@@ -19,6 +19,10 @@ typedef struct
     int global_font_size;
 } mainApp;
 
+G_MODULE_EXPORT void app_menu_preferences_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+G_MODULE_EXPORT void app_menu_help_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+G_MODULE_EXPORT void app_menu_about_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+
 G_MODULE_EXPORT void app_update_font_label_display(mainApp *_mApp);
 G_MODULE_EXPORT void app_on_increase_font_clicked(GtkButton *button, gpointer user_data);
 G_MODULE_EXPORT void app_on_decrease_font_clicked(GtkButton *button, gpointer user_data);

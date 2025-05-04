@@ -2,8 +2,26 @@
 <!-- Created with Cambalache 0.96.0 -->
 <interface>
   <!-- interface-name gtk_new_UI_layout.ui -->
+  <requires lib="gio" version="2.0"/>
   <requires lib="gtk" version="4.16"/>
   <requires lib="libadwaita" version="1.3"/>
+
+<!-- Define the menu model -->
+  <menu id="main_popover_menu">
+    <item>
+      <attribute name="label" translatable="yes">_Preferences</attribute>
+      <attribute name="action">win.preferences</attribute> <!-- Action scoped to the window -->
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">_Help</attribute>
+      <attribute name="action">win.help</attribute>
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">_About</attribute>
+      <attribute name="action">win.about</attribute>
+    </item>
+  </menu>
+
   <!-- Main Application Window using Libadwaita -->
   <object class="AdwApplicationWindow" id="main_window">
     <!-- Main Window Content (The Calculator itself) -->
@@ -22,14 +40,20 @@
               </object>
             </property>
             <property name="valign">start</property>
-            <child type="start">
-              <object class="GtkButton" id="settings_button">
-                <property name="has-tooltip">True</property>
-                <property name="icon-name">open-menu-symbolic</property>
-                <property name="tooltip-text" translatable="yes">Preferences</property>
-                <property name="valign">center</property>
+            <!-- Pack the Menu Button at the end -->
+            <child type="end">
+              <object class="GtkMenuButton" id="main_menu_button">
+                <property name="tooltip-text" translatable="yes">Main Menu</property>
+
+                <property name="popover">
+                  <object class="GtkPopoverMenu">
+                    <property name="menu-model">main_popover_menu</property>
+                    <property name="has-arrow">true</property>
+                  </object>
+                </property>
               </object>
             </child>
+
           </object>
         </child>
         <child>
@@ -341,7 +365,8 @@
     <property name="visible">True</property>
     <style/>
   </object>
-  <!-- Defined separately, not nested in the main window -->
+
+  <!-- Preferences Page -->
   <object class="AdwPreferencesWindow" id="preferences_window">
     <property name="default-height">440</property>
     <property name="default-width">540</property>
@@ -351,17 +376,20 @@
     <property name="height-request">300</property>
     <!-- Close if main window closes -->
     <property name="hide-on-close">true</property>
-    <property name="modal">true</property>
     <!-- Hide instead of destroy on close click -->
     <property name="search-enabled">true</property>
     <property name="title" translatable="yes">Preferences</property>
     <!-- Enable built-in search -->
     <property name="width-request">400</property>
+    <property name="modal">false</property>
+    <property name="visible">false</property>
+
     <child>
       <object class="AdwPreferencesPage">
         <property name="icon-name">preferences-system-symbolic</property>
         <property name="title" translatable="yes">General</property>
         <child>
+
           <object class="AdwPreferencesGroup">
             <property name="title" translatable="yes">Appearance</property>
             <child>
@@ -411,6 +439,7 @@
               </object>
             </child>
           </object>
+
         </child>
       </object>
     </child>

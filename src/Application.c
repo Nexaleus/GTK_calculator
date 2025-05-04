@@ -6,6 +6,46 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+G_MODULE_EXPORT void app_menu_preferences_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+{
+    mainApp *_mApp = (mainApp *)user_data;
+    if (!_mApp)
+    {
+        g_error("Invalid user_data in preferences action");
+    }
+    app_on_settings_button_clicked(NULL, _mApp); // Reuse settings logic
+}
+
+G_MODULE_EXPORT void app_menu_help_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+{
+    g_print("Help action activated.\n");
+}
+
+G_MODULE_EXPORT void app_menu_about_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+{
+    mainApp *_mApp = (mainApp *)user_data;
+    if (!_mApp || !_mApp->main_window)
+    {
+        g_error("Cannot show About dialog: invalid mainApp or main_window pointer.\n");
+    }
+
+    const char *developers[] = {"Xor Rcxrcx", NULL}; // Replace with actual developer name(s)
+
+    AdwAboutWindow *about_window = adw_about_window_new();
+    adw_about_window_set_application_name(ADW_ABOUT_WINDOW(about_window), "GTK Calculator");
+    adw_about_window_set_version(ADW_ABOUT_WINDOW(about_window), "1.2.1");
+    adw_about_window_set_developer_name(ADW_ABOUT_WINDOW(about_window), "Xor Rcxrcx");
+    adw_about_window_set_developers(ADW_ABOUT_WINDOW(about_window), developers);
+    adw_about_window_set_copyright(ADW_ABOUT_WINDOW(about_window), "© 2023 Xor Rcxrcx");
+    adw_about_window_set_license_type(ADW_ABOUT_WINDOW(about_window), GTK_LICENSE_LGPL_3_0);
+    adw_about_window_set_application_icon(ADW_ABOUT_WINDOW(about_window), "gnome-calculator-symbolic");
+    gtk_window_set_transient_for(GTK_WINDOW(about_window), GTK_WINDOW(_mApp->main_window));
+    gtk_window_set_modal(GTK_WINDOW(about_window), TRUE);
+    gtk_window_present(GTK_WINDOW(about_window));
+
+    g_message("About window shown.\n");
+}
+
 G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_name)
 {
     g_print("----------------------------------\nAttempting to load UI XML FILE: '%s'\n\n", ui_file_name);
@@ -108,9 +148,8 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);         
             //------------------------------------------------------------------------------------
 
-            button = gtk_builder_get_object(builder, "settings_button");
-            g_signal_connect(button,"clicked",G_CALLBACK(app_on_settings_button_clicked),_mApp); 
-
+            /*button = gtk_builder_get_object(builder, "settings_button");
+            g_signal_connect(button,"clicked",G_CALLBACK(app_on_settings_button_clicked),_mApp);*/ 
 
             _mApp->label_fnt_size = NULL;
             GObject *label_fnt = gtk_builder_get_object(builder, "label_fnt_size");
@@ -123,6 +162,17 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             button = gtk_builder_get_object(builder, "button_fnt_decrease");
             g_signal_connect(button,"clicked",G_CALLBACK(app_on_decrease_font_clicked),_mApp);
 
+
+            //ACTIONS INIT
+            const GActionEntry win_actions[] = {
+                {"preferences", app_menu_preferences_activated, NULL, NULL, NULL},
+                {"help", app_menu_help_activated, NULL, NULL, NULL},
+                {"about", app_menu_about_activated, NULL, NULL, NULL}
+            };
+            // Pass _mApp as user_data, making it available to the action handlers.
+            g_action_map_add_action_entries(G_ACTION_MAP(_mApp->main_window), win_actions, G_N_ELEMENTS(win_actions), _mApp);
+
+            //------------
             gtk_window_present(GTK_APPLICATION_WINDOW(appWindow));
             g_object_unref(builder);
         }
@@ -176,7 +226,7 @@ G_MODULE_EXPORT void app_on_decrease_font_clicked(GtkButton *button, gpointer us
     _mApp = (mainApp *)user_data;
     if (_mApp)
     {
-        if(_mApp->global_font_size > 2)
+        if(_mApp->global_font_size > 6)
         {
             _mApp->global_font_size--;
             app_update_font_label_display(_mApp);
