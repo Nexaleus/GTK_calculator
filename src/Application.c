@@ -4,6 +4,7 @@
 
 #include "Application.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_name)
 {
@@ -31,8 +32,10 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
         {
             GtkBuilder *builder = gtk_builder_new_from_file(absolute_path);
 
+            _mApp->main_window = NULL;
             GObject *appWindow = gtk_builder_get_object(builder, "main_window");
             gtk_window_set_application(GTK_APPLICATION_WINDOW(appWindow), _mApp->adw_app_handle);
+            _mApp->main_window = GTK_WINDOW(appWindow);
 
             //INITIALIZING LABELS
             _mApp->label_handle = NULL;
@@ -42,6 +45,11 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             _mApp->label_preview = NULL;
             GObject *preview_label = gtk_builder_get_object(builder,"preview_display");
             _mApp->label_preview = GTK_LABEL(preview_label);
+
+            //PREF WINDOW INIT
+            _mApp->pref_window = NULL;
+            GObject *pref_win_obj = gtk_builder_get_object(builder,"preferences_window");
+            _mApp->pref_window = GTK_WINDOW(pref_win_obj);
 
             //CONNECTING CALC BUTTON CALLBACKS
             GObject *button = NULL;
@@ -100,6 +108,21 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);         
             //------------------------------------------------------------------------------------
 
+            button = gtk_builder_get_object(builder, "settings_button");
+            g_signal_connect(button,"clicked",G_CALLBACK(app_on_settings_button_clicked),_mApp); 
+
+
+            _mApp->label_fnt_size = NULL;
+            GObject *label_fnt = gtk_builder_get_object(builder, "label_fnt_size");
+            _mApp->label_fnt_size = GTK_LABEL(label_fnt);
+            app_update_font_label_display(_mApp);
+
+            button = gtk_builder_get_object(builder, "button_fnt_increase");
+            g_signal_connect(button,"clicked",G_CALLBACK(app_on_increase_font_clicked),_mApp);
+
+            button = gtk_builder_get_object(builder, "button_fnt_decrease");
+            g_signal_connect(button,"clicked",G_CALLBACK(app_on_decrease_font_clicked),_mApp);
+
             gtk_window_present(GTK_APPLICATION_WINDOW(appWindow));
             g_object_unref(builder);
         }
@@ -112,6 +135,76 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
     else
     {
         g_error("Could not get ABSOLUTE file path used for loading main UI structure.\n");
+    }
+}
+
+G_MODULE_EXPORT void app_update_font_label_display(mainApp *_mApp)
+{
+    if(!_mApp || _mApp->global_font_size < 2 || !_mApp->label_fnt_size)
+    {
+        g_warning("INVALID mainApp/label_fnt_size pointer!\n");
+    }
+    else
+    {
+        char display_label_buffer[5];
+        snprintf(display_label_buffer, sizeof(display_label_buffer), "%d",_mApp->global_font_size);
+        gtk_label_set_text(_mApp->label_fnt_size,display_label_buffer);
+    }
+}
+
+G_MODULE_EXPORT void app_on_increase_font_clicked(GtkButton *button, gpointer user_data)
+{
+    mainApp *_mApp = NULL;
+    _mApp = (mainApp *)user_data;
+    if (_mApp)
+    {
+        if(_mApp->global_font_size < 24)
+        {       
+            _mApp->global_font_size++;
+            app_update_font_label_display(_mApp);
+        }
+    }
+    else
+    {
+        g_warning("INVALID mainApp pointer!\n");
+    }
+}
+
+G_MODULE_EXPORT void app_on_decrease_font_clicked(GtkButton *button, gpointer user_data)
+{
+    mainApp *_mApp = NULL;
+    _mApp = (mainApp *)user_data;
+    if (_mApp)
+    {
+        if(_mApp->global_font_size > 2)
+        {
+            _mApp->global_font_size--;
+            app_update_font_label_display(_mApp);
+        }
+    }
+    else
+    {
+        g_warning("INVALID mainApp pointer!\n");
+    }
+}
+
+G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer user_data)
+{
+    mainApp *_mApp = NULL;
+    _mApp = (mainApp *)user_data;
+    if (!_mApp)
+    {
+        g_error("INVALID TYPE CONVERSION TO MAINAPP POINTER");
+    }
+
+    if(_mApp->pref_window)
+    {
+        gtk_window_set_transient_for(GTK_WINDOW(_mApp->pref_window), GTK_WINDOW(_mApp->main_window));
+        gtk_window_present(GTK_WINDOW(_mApp->pref_window));
+    }
+    else
+    {
+        g_warning("Preferences window not found!\n");
     }
 }
 
@@ -194,7 +287,7 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
         g_error("INVALID TYPE CONVERSION TO MAINAPP POINTER");
     }
 
-    app_load_ui_from_file(_mApp, "gtk_new_UI_layout.ui");
+    app_load_ui_from_file(_mApp, "gtk_new_UI_layout_PREFERENCES.ui");
 }
 
 G_MODULE_EXPORT int app_main_run(int argc, char **argv)
@@ -221,6 +314,7 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
     }
 
     mApp->calc->cState = CSTATE_RESET;
+    mApp->global_font_size = 11;
     g_signal_connect(mApp->adw_app_handle, "activate", G_CALLBACK(app_activate_gtk), mApp);
 
     // MAIN APP LOOP
