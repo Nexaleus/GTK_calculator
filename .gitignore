@@ -1,4 +1,5 @@
 .vscode/
+.VSCodeCounter/*
 
 res/themeRes/assets/
 res/themeRes/gtk-4.0/gtk.css
