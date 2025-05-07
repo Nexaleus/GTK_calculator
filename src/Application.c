@@ -77,79 +77,79 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             gtk_window_set_application(GTK_APPLICATION_WINDOW(appWindow), _mApp->adw_app_handle);
             _mApp->main_window = GTK_WINDOW(appWindow);
 
-            //INITIALIZING LABELS
+            // INITIALIZING LABELS
             _mApp->label_handle = NULL;
-            GObject *display_label = gtk_builder_get_object(builder,"display_label");
+            GObject *display_label = gtk_builder_get_object(builder, "display_label");
             _mApp->label_handle = GTK_LABEL(display_label);
 
             _mApp->label_preview = NULL;
-            GObject *preview_label = gtk_builder_get_object(builder,"preview_display");
+            GObject *preview_label = gtk_builder_get_object(builder, "preview_display");
             _mApp->label_preview = GTK_LABEL(preview_label);
 
-            //PREF WINDOW INIT
+            // PREF WINDOW INIT
             _mApp->pref_window = NULL;
-            GObject *pref_win_obj = gtk_builder_get_object(builder,"preferences_window");
+            GObject *pref_win_obj = gtk_builder_get_object(builder, "preferences_window");
             _mApp->pref_window = GTK_WINDOW(pref_win_obj);
 
-            //CONNECTING CALC BUTTON CALLBACKS
+            // CONNECTING CALC BUTTON CALLBACKS
             GObject *button = NULL;
-            button = gtk_builder_get_object(builder,"button_clear");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            button = gtk_builder_get_object(builder, "button_clear");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
 
-            button = gtk_builder_get_object(builder,"button_backspace");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            button = gtk_builder_get_object(builder, "button_backspace");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
 
-            button = gtk_builder_get_object(builder,"button_divide");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_multiply");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_7");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_8");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_9");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_subtract");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_4");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_5");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_6");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_add");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_1");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_2");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_3");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_equals");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
+            button = gtk_builder_get_object(builder, "button_divide");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
 
-            button = gtk_builder_get_object(builder,"button_0");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_decimal");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);         
+            button = gtk_builder_get_object(builder, "button_multiply");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_7");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_8");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_9");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_subtract");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_4");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_5");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_6");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_add");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_1");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_2");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_3");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_equals");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_0");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
+
+            button = gtk_builder_get_object(builder, "button_decimal");
+            g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp);
             //------------------------------------------------------------------------------------
 
             /*button = gtk_builder_get_object(builder, "settings_button");
-            g_signal_connect(button,"clicked",G_CALLBACK(app_on_settings_button_clicked),_mApp);*/ 
+            g_signal_connect(button,"clicked",G_CALLBACK(app_on_settings_button_clicked),_mApp);*/
 
             _mApp->label_fnt_size = NULL;
             GObject *label_fnt = gtk_builder_get_object(builder, "label_fnt_size");
@@ -157,18 +157,16 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             app_update_font_label_display(_mApp);
 
             button = gtk_builder_get_object(builder, "button_fnt_increase");
-            g_signal_connect(button,"clicked",G_CALLBACK(app_on_increase_font_clicked),_mApp);
+            g_signal_connect(button, "clicked", G_CALLBACK(app_on_increase_font_clicked), _mApp);
 
             button = gtk_builder_get_object(builder, "button_fnt_decrease");
-            g_signal_connect(button,"clicked",G_CALLBACK(app_on_decrease_font_clicked),_mApp);
+            g_signal_connect(button, "clicked", G_CALLBACK(app_on_decrease_font_clicked), _mApp);
 
-
-            //ACTIONS INIT
+            // ACTIONS INIT
             const GActionEntry win_actions[] = {
                 {"preferences", app_menu_preferences_activated, NULL, NULL, NULL},
                 {"help", app_menu_help_activated, NULL, NULL, NULL},
-                {"about", app_menu_about_activated, NULL, NULL, NULL}
-            };
+                {"about", app_menu_about_activated, NULL, NULL, NULL}};
             // Pass _mApp as user_data, making it available to the action handlers.
             g_action_map_add_action_entries(G_ACTION_MAP(_mApp->main_window), win_actions, G_N_ELEMENTS(win_actions), _mApp);
 
@@ -190,15 +188,15 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
 
 G_MODULE_EXPORT void app_update_font_label_display(mainApp *_mApp)
 {
-    if(!_mApp || _mApp->global_font_size < 2 || !_mApp->label_fnt_size)
+    if (!_mApp || _mApp->global_font_size < 2 || !_mApp->label_fnt_size)
     {
         g_warning("INVALID mainApp/label_fnt_size pointer!\n");
     }
     else
     {
         char display_label_buffer[5];
-        snprintf(display_label_buffer, sizeof(display_label_buffer), "%d",_mApp->global_font_size);
-        gtk_label_set_text(_mApp->label_fnt_size,display_label_buffer);
+        snprintf(display_label_buffer, sizeof(display_label_buffer), "%d", _mApp->global_font_size);
+        gtk_label_set_text(_mApp->label_fnt_size, display_label_buffer);
     }
 }
 
@@ -208,8 +206,8 @@ G_MODULE_EXPORT void app_on_increase_font_clicked(GtkButton *button, gpointer us
     _mApp = (mainApp *)user_data;
     if (_mApp)
     {
-        if(_mApp->global_font_size < 24)
-        {       
+        if (_mApp->global_font_size < 24)
+        {
             _mApp->global_font_size++;
             app_update_font_label_display(_mApp);
         }
@@ -226,7 +224,7 @@ G_MODULE_EXPORT void app_on_decrease_font_clicked(GtkButton *button, gpointer us
     _mApp = (mainApp *)user_data;
     if (_mApp)
     {
-        if(_mApp->global_font_size > 6)
+        if (_mApp->global_font_size > 6)
         {
             _mApp->global_font_size--;
             app_update_font_label_display(_mApp);
@@ -247,7 +245,7 @@ G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer 
         g_error("INVALID TYPE CONVERSION TO MAINAPP POINTER");
     }
 
-    if(_mApp->pref_window)
+    if (_mApp->pref_window)
     {
         gtk_window_set_transient_for(GTK_WINDOW(_mApp->pref_window), GTK_WINDOW(_mApp->main_window));
         gtk_window_present(GTK_WINDOW(_mApp->pref_window));
@@ -351,7 +349,7 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
         g_error("Failed to allocate memory for mainApp structure.");
     }
 
-    //adw_init();
+    // adw_init();
     mApp->adw_app_handle = NULL;
     mApp->adw_app_handle = adw_application_new("app.xorrcxrcx.calculator", G_APPLICATION_DEFAULT_FLAGS);
     mApp->calc = NULL;

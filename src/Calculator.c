@@ -66,7 +66,7 @@ G_MODULE_EXPORT double perform_calculation(Calculator *calc)
 
 G_MODULE_EXPORT void update_display(GtkLabel *_label, const char *text)
 {
-    gtk_label_set_text(GTK_LABEL(_label),text);
+    gtk_label_set_text(GTK_LABEL(_label), text);
 }
 
 G_MODULE_EXPORT void append_to_display(GtkLabel *_label, const char *text_to_append)
@@ -119,8 +119,8 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
         const char *label = gtk_button_get_label(GTK_BUTTON(button));
         const char *current_text = gtk_label_get_text(display_label);
         // const char *preview_text = gtk_label_get_text(preview_label); // Keep for reference if needed
-        char display_buffer[100]; // For formatting results
-        char preview_buffer[100]; // For formatting preview
+        char display_buffer[100];   // For formatting results
+        char preview_buffer[100];   // For formatting preview
         double current_value = 0.0; // Initialize
 
         // Attempt to parse the current display value
@@ -128,14 +128,14 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
         current_value = strtod(current_text, &endptr);
 
         // More robust check for invalid input on display
-        if (endptr == current_text && strcmp(current_text, "0") != 0 && strcmp(current_text, "") != 0 && strcmp(current_text,".") !=0 && strcmp(current_text,"0.") !=0)
+        if (endptr == current_text && strcmp(current_text, "0") != 0 && strcmp(current_text, "") != 0 && strcmp(current_text, ".") != 0 && strcmp(current_text, "0.") != 0)
         {
-            if (strcmp(current_text, "Error") != 0) { // Don't warn if it's a known "Error" string
-                 g_warning("Display contains non-numeric value: '%s', parsed as %f\n", current_text, current_value);
+            if (strcmp(current_text, "Error") != 0)
+            { // Don't warn if it's a known "Error" string
+                g_warning("Display contains non-numeric value: '%s', parsed as %f\n", current_text, current_value);
             }
             // If display is "Error", current_value will be 0.0. Subsequent operations might use this.
         }
-
 
         // --- Clear Button ---
         if (strcmp(label, "C") == 0 || strcmp(label, "CE") == 0)
@@ -181,9 +181,12 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                     {
                         update_display(display_label, "0.");
                         // Determine if this starts op1 or op2
-                        if (calc->cState == CSTATE_INPUT_OPERATOR || (calc->cState == CSTATE_INPUT_OP2 && strcmp(current_text,"0")==0) ) {
+                        if (calc->cState == CSTATE_INPUT_OPERATOR || (calc->cState == CSTATE_INPUT_OP2 && strcmp(current_text, "0") == 0))
+                        {
                             calc->cState = CSTATE_INPUT_OP2;
-                        } else {
+                        }
+                        else
+                        {
                             calc->cState = CSTATE_INPUT_OP1;
                         }
                         return;
@@ -194,9 +197,11 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 switch (calc->cState)
                 {
                 case CSTATE_RESET: // e.g. after C, or initial state (but not after '=')
-                    if (strcmp(label, ".") == 0) update_display(display_label, "0.");
-                    else update_display(display_label, label);
-                    update_display(preview_label,"0"); // Reset preview
+                    if (strcmp(label, ".") == 0)
+                        update_display(display_label, "0.");
+                    else
+                        update_display(display_label, label);
+                    update_display(preview_label, "0"); // Reset preview
                     calc->cState = CSTATE_INPUT_OP1;
                     break;
                 case CSTATE_INPUT_OP1:
@@ -210,8 +215,10 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                     }
                     break;
                 case CSTATE_INPUT_OPERATOR: // Operator was just pressed, start op2
-                    if (strcmp(label, ".") == 0) update_display(display_label, "0.");
-                    else update_display(display_label, label);
+                    if (strcmp(label, ".") == 0)
+                        update_display(display_label, "0.");
+                    else
+                        update_display(display_label, label);
                     calc->cState = CSTATE_INPUT_OP2;
                     break;
                 case CSTATE_INPUT_OP2:
@@ -248,7 +255,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
             {
                 switch (calc->cState)
                 {
-                case CSTATE_RESET: // Not after '=', e.g. after 'C' or initial state. Display shows "0".
+                case CSTATE_RESET:             // Not after '=', e.g. after 'C' or initial state. Display shows "0".
                     calc->op1 = current_value; // current_value is 0 if display is "0"
                     calc->operator = new_operator;
                     calc->cState = CSTATE_INPUT_OPERATOR;
@@ -272,22 +279,25 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                     break;
                 case CSTATE_INPUT_OP2: // Second operand entered, calculate intermediate, then apply new op
                     calc->op2 = current_value;
-                    
+
                     double temp_op1_for_preview = calc->op1; // For preview before op1 is overwritten
                     char temp_current_op_for_preview = calc->operator;
 
                     calc->op1 = perform_calculation(calc); // Result becomes new op1. Sets just_calculated=TRUE, cState=CSTATE_RESET
 
-                    if (isnan(calc->op1)) { // Error from perform_calculation
+                    if (isnan(calc->op1))
+                    { // Error from perform_calculation
                         update_display(display_label, "Error");
                         snprintf(preview_buffer, sizeof(preview_buffer), "%g %c %g = Error", temp_op1_for_preview, temp_current_op_for_preview, calc->op2);
                         update_display(preview_label, preview_buffer);
                         // calc->cState is CSTATE_RESET, calc->just_calculated is FALSE (from perform_calculation error path)
-                    } else {
+                    }
+                    else
+                    {
                         // Chain the new operator
-                        calc->operator = new_operator; // Apply the NEW operator
+                        calc->operator = new_operator;        // Apply the NEW operator
                         calc->cState = CSTATE_INPUT_OPERATOR; // Ready for next op2
-                        calc->just_calculated = FALSE;       // Not a final result display, it's chaining
+                        calc->just_calculated = FALSE;        // Not a final result display, it's chaining
 
                         snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1);
                         update_display(display_label, display_buffer); // Show intermediate result
@@ -321,12 +331,12 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 update_display(display_label, display_buffer);
                 snprintf(preview_buffer, sizeof(preview_buffer), "%g =", val_to_show);
                 update_display(preview_label, preview_buffer);
-                
-                calc->op1 = val_to_show; // Ensure op1 has this value for next step if operator is pressed
+
+                calc->op1 = val_to_show;      // Ensure op1 has this value for next step if operator is pressed
                 calc->just_calculated = TRUE; // It's now a displayed result
                 calc->cState = CSTATE_RESET;  // Remains/becomes reset
                 break;
-            case CSTATE_INPUT_OP1: // e.g., user types "5" then "="
+            case CSTATE_INPUT_OP1:         // e.g., user types "5" then "="
                 calc->op1 = current_value; // op1 is what's on display
                 // No actual calculation, op1 is the result.
                 snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1);
@@ -337,19 +347,22 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                 calc->cState = CSTATE_RESET;  // Reset state
                 break;
             case CSTATE_INPUT_OPERATOR: // e.g., "5 + =" (op1 is 5, operator is +)
-                calc->op2 = calc->op1; // Use op1 as op2 (standard behavior for "op =")
-                
+                calc->op2 = calc->op1;  // Use op1 as op2 (standard behavior for "op =")
+
                 snprintf(temp_op1_str, sizeof(temp_op1_str), "%g", calc->op1); // op1 before calculation
                 snprintf(temp_op2_str, sizeof(temp_op2_str), "%g", calc->op2); // op2 (which is same as op1 before calc)
 
                 calc->op1 = perform_calculation(calc); // perform_calculation sets just_calculated=TRUE, cState=CSTATE_RESET on success
 
-                if (isnan(calc->op1)) { // Error from perform_calculation
+                if (isnan(calc->op1))
+                { // Error from perform_calculation
                     update_display(display_label, "Error");
                     snprintf(preview_buffer, sizeof(preview_buffer), "%s %c %s = Error", temp_op1_str, temp_operator_char, temp_op2_str);
                     update_display(preview_label, preview_buffer);
                     // calc->cState is CSTATE_RESET, calc->just_calculated is FALSE (from perform_calculation error path)
-                } else {
+                }
+                else
+                {
                     snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1);
                     update_display(display_label, display_buffer);
                     snprintf(preview_buffer, sizeof(preview_buffer), "%s %c %s =", temp_op1_str, temp_operator_char, temp_op2_str);
@@ -357,7 +370,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
                     // calc->just_calculated is TRUE, calc->cState is CSTATE_RESET (from perform_calculation)
                 }
                 break;
-            case CSTATE_INPUT_OP2: // Standard calculation: "5 + 3 ="
+            case CSTATE_INPUT_OP2:         // Standard calculation: "5 + 3 ="
                 calc->op2 = current_value; // op2 is from current display
 
                 snprintf(temp_op1_str, sizeof(temp_op1_str), "%g", calc->op1); // op1 before calculation
@@ -365,12 +378,15 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
 
                 calc->op1 = perform_calculation(calc); // perform_calculation sets just_calculated=TRUE, cState=CSTATE_RESET on success
 
-                if (isnan(calc->op1)) { // Error from perform_calculation
+                if (isnan(calc->op1))
+                { // Error from perform_calculation
                     update_display(display_label, "Error");
                     snprintf(preview_buffer, sizeof(preview_buffer), "%s %c %s = Error", temp_op1_str, temp_operator_char, temp_op2_str);
                     update_display(preview_label, preview_buffer);
                     // calc->cState is CSTATE_RESET, calc->just_calculated is FALSE (from perform_calculation error path)
-                } else {
+                }
+                else
+                {
                     snprintf(display_buffer, sizeof(display_buffer), "%g", calc->op1);
                     update_display(display_label, display_buffer);
                     snprintf(preview_buffer, sizeof(preview_buffer), "%s %c %s =", temp_op1_str, temp_operator_char, temp_op2_str);
@@ -384,7 +400,8 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
         else if (strcmp(label, "←") == 0)
         {
             // Backspace should not operate if a result was just calculated and not yet cleared by new input
-            if (calc->just_calculated) {
+            if (calc->just_calculated)
+            {
                 // Optionally, could clear the 'just_calculated' state and allow backspace on the result
                 // For now, let's make it do nothing if a result is freshly displayed.
                 return;
@@ -420,7 +437,7 @@ G_MODULE_EXPORT void calc_on_button_click(GtkWidget *button, gpointer user_data)
         // --- Other Buttons (e.g., +/- , %, etc. - Not implemented) ---
         else
         {
-            g_message("Button '%s' not implemented yet.\n", label);
+            g_warning("Button '%s' not implemented yet.\n", label);
         }
     }
     else

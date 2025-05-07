@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/app/xorrcxrcx/calculator">
+    <file>ui/gtk_new_UI_layout.ui</file>
+    <file>ui/gtk_new_UI_layout_PREFERENCES.ui</file>
+    <file compressed="true">icons/my-calculator-icon.png</file>
+    <!-- Add other resources here -->
+  </gresource>
+</gresources>

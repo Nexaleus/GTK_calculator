@@ -15,7 +15,9 @@ res/custom-themeRRRRR.css
 /build/debug/*
 !/build/debug/res
 /build/debug/res/*
+!/build/debug/res/resources.gresource.xml
 !/build/debug/res/ui
+!/build/debug/res/icons
 /build/debug/res/ui/*
 !/build/debug/res/ui/UI_MAIN_libadwaita.ui
 !/build/debug/res/ui/gtk_new_UI_layout.ui
