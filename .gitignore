@@ -1,4 +1,5 @@
 .vscode/
+.VSCodeCounter/*
 
 res/themeRes/assets/
 res/themeRes/gtk-4.0/gtk.css
@@ -18,6 +19,7 @@ res/custom-themeRRRRR.css
 /build/debug/res/ui/*
 !/build/debug/res/ui/UI_MAIN_libadwaita.ui
 !/build/debug/res/ui/gtk_new_UI_layout.ui
+!/build/debug/res/ui/gtk_new_UI_layout_PREFERENCES.ui
 
 ####################################################
 
