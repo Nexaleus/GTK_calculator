@@ -33,7 +33,7 @@ G_MODULE_EXPORT void app_menu_about_activated(GSimpleAction *action, GVariant *p
 
     AdwAboutWindow *about_window = adw_about_window_new();
     adw_about_window_set_application_name(ADW_ABOUT_WINDOW(about_window), "GTK Calculator");
-    adw_about_window_set_version(ADW_ABOUT_WINDOW(about_window), "1.2.1");
+    adw_about_window_set_version(ADW_ABOUT_WINDOW(about_window), "1.3.0");
     adw_about_window_set_developer_name(ADW_ABOUT_WINDOW(about_window), "Xor Rcxrcx");
     adw_about_window_set_developers(ADW_ABOUT_WINDOW(about_window), developers);
     adw_about_window_set_copyright(ADW_ABOUT_WINDOW(about_window), "© 2025 Xor Rcxrcx");
