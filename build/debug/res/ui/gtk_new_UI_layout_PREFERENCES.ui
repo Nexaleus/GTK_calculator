@@ -394,8 +394,7 @@
             <property name="title" translatable="yes">Appearance</property>
             <child>
               <object class="AdwActionRow">
-                <property name="subtitle" translatable="yes">Requires application restart</property>
-                <property name="title" translatable="yes">Enable Dark Mode (Example)</property>
+                <property name="title" translatable="yes">Switch to Light Mode</property>
                 <child type="suffix">
                   <object class="GtkSwitch" id="dark_mode_switch">
                     <property name="valign">center</property>
