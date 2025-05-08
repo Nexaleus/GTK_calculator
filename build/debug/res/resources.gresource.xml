@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/app/xorrcxrcx/calculator">
-    <file compressed="true" alias="ui/gtk_new_UI_layout.ui">gtk_new_UI_layout.ui</file>
-    <file compressed="true" alias="ui/gtk_new_UI_layout_PREFERENCES.ui">gtk_new_UI_layout_PREFERENCES.ui</file>
-    <file compressed="true" alias="icons/app-icon.png">app-icon.png</file>
+    <file compressed="true" alias="ui-layout-old.ui">ui/gtk_new_UI_layout.ui</file>
+    <file compressed="true" alias="ui-layout-main.ui">ui/gtk_new_UI_layout_PREFERENCES.ui</file>
+    <file compressed="true" alias="app-icon.png">icons/app-icon.png</file>
     <file compressed="true">style.css</file>
   </gresource>
 </gresources>
