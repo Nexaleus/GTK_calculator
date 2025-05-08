@@ -151,6 +151,12 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
             /*button = gtk_builder_get_object(builder, "settings_button");
             g_signal_connect(button,"clicked",G_CALLBACK(app_on_settings_button_clicked),_mApp);*/
 
+            _mApp->dark_mode_switch = NULL;
+            GObject *switch_button = gtk_builder_get_object(builder, "dark_mode_switch");
+            _mApp->dark_mode_switch = GTK_SWITCH(switch_button);
+
+            g_signal_connect(_mApp->dark_mode_switch,"state-set",G_CALLBACK(app_on_theme_switch_set), NULL);
+
             _mApp->label_fnt_size = NULL;
             GObject *label_fnt = gtk_builder_get_object(builder, "label_fnt_size");
             _mApp->label_fnt_size = GTK_LABEL(label_fnt);
@@ -183,6 +189,29 @@ G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_n
     else
     {
         g_error("Could not get ABSOLUTE file path used for loading main UI structure.\n");
+    }
+}
+
+G_MODULE_EXPORT void app_on_theme_switch_set(GtkSwitch *_switch, gpointer user_data)
+{
+    AdwStyleManager *style_manager = NULL;
+    style_manager = adw_style_manager_get_default();
+    if (style_manager)
+    {
+        if (adw_style_manager_get_dark(style_manager))
+        {
+            adw_style_manager_set_color_scheme(style_manager, ADW_COLOR_SCHEME_FORCE_LIGHT);
+            g_message("App theme set to LIGHT MODE\n");
+        }
+        else
+        {
+            adw_style_manager_set_color_scheme(style_manager, ADW_COLOR_SCHEME_FORCE_DARK);
+            g_message("App theme set to DARK MODE\n");
+        }
+    }
+    else
+    {
+        g_warning("Default ADW Style manager handle was not found!\n");
     }
 }
 
@@ -247,6 +276,33 @@ G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer 
 
     if (_mApp->pref_window)
     {
+        AdwStyleManager *style_manager = NULL;
+        style_manager = adw_style_manager_get_default();
+        if (style_manager)
+        {
+            if (_mApp->dark_mode_switch)
+            {
+                if (adw_style_manager_get_dark(style_manager))
+                {
+                    gtk_switch_set_active(_mApp->dark_mode_switch, FALSE);
+                    g_message("Current app theme is in Dark Mode, setting switch ON\n");
+                }
+                else
+                {
+                    gtk_switch_set_active(_mApp->dark_mode_switch, TRUE);
+                    g_message("Current app theme is in Light Mode, setting switch OFF\n");
+                }
+            }
+            else
+            {
+                g_warning("Dark mode switch is NULL!\n");
+            }
+        }
+        else
+        {
+            g_warning("Default ADW Style manager handle was not found!\n");
+        }
+
         gtk_window_set_transient_for(GTK_WINDOW(_mApp->pref_window), GTK_WINDOW(_mApp->main_window));
         gtk_window_present(GTK_WINDOW(_mApp->pref_window));
     }

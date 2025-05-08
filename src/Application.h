@@ -13,6 +13,7 @@ typedef struct
     GtkLabel *label_handle;
     GtkLabel *label_preview;
     GtkLabel *label_fnt_size;
+    GtkSwitch *dark_mode_switch;
     AdwPreferencesWindow *pref_window;
     AdwApplicationWindow *main_window;
     Calculator *calc;
@@ -30,6 +31,7 @@ G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer 
 G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_name);
 G_MODULE_EXPORT void app_load_theme_from_file(const char *theme_name, gboolean force_dark);
 G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data);
+G_MODULE_EXPORT void app_on_theme_switch_set(GtkSwitch* _switch, gpointer user_data);
 G_MODULE_EXPORT int app_main_run(int argc, char **argv);
 
 #endif
