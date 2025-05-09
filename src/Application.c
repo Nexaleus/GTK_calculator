@@ -9,6 +9,78 @@
 // Include the generated GResource header
 #include "main_application_resources.h"
 
+G_MODULE_EXPORT gchar* app_append_to_str(const gchar *dest_text, const gchar *text_to_append)
+{
+    // const char *current_text = gtk_label_get_text(GTK_LABEL(_label));
+    gsize dest_len = strlen(dest_text);
+    gsize append_len = strlen(text_to_append);
+    // Calculate total size needed: current length + append length + 1 (for null terminator)
+    gsize total_size = dest_len + append_len + 1;
+
+    // Allocate memory for the new combined string
+    char *new_text_buffer = g_malloc(total_size);
+    if (!new_text_buffer)
+    {
+        g_error("Failed to allocate memory in append_to_display");
+        // Allocation failed, cannot proceed
+    }
+
+    // Copy the current text into the new buffer first.
+    // Using strcpy here is safe because we allocated exactly enough space initially.
+    strcpy(new_text_buffer, dest_text);
+
+    // Append the new text using g_strlcat for safety.
+    // g_strlcat ensures null termination and prevents buffer overflows.
+    // The third argument is the total size of the destination buffer.
+    g_strlcat(new_text_buffer, text_to_append, total_size);
+
+    // Update the label with the newly created string
+    // gtk_label_set_text(GTK_LABEL(_label), new_text_buffer);
+    // Free the memory allocated by g_malloc
+    g_free(new_text_buffer);
+    return new_text_buffer;
+}
+
+G_MODULE_EXPORT gchar* app_get_res_path(const gchar *res_name)
+{
+    if (!resource_base_path_absolute)
+    {
+        g_warning("During app_get_res_path: resource_base_path_absolute string is NULL.\n");
+        return;
+    }
+    else
+    {
+        if (res_name)
+        {
+            gchar *full_path = NULL;
+            gchar *res_path_format = NULL;
+            res_path_format = app_append_to_str(resource_base_path_absolute, "%s");
+            if (!res_path_format)
+            {
+                g_warning("During app_get_res_path: res_path_format string is NULL.\n");
+                return;
+            }
+            else
+            {
+                full_path = g_strdup_printf(res_path_format, res_name);
+                if (full_path)
+                {
+                    return full_path;
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+        else
+        {
+            g_warning("During app_get_res_path: res_path string arg is NULL.\n");
+            return;
+        }
+    }
+}
+
 G_MODULE_EXPORT void app_menu_preferences_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
     mainApp *_mApp = (mainApp *)user_data;
@@ -129,42 +201,54 @@ G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer 
     }
 }
 
-G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
+G_MODULE_EXPORT void app_load_css_from_resource(gchar *res_name)
 {
-    mainApp *_mApp = (mainApp *)user_data;
-    if (!_mApp)
+    if (!res_name)
     {
-        g_error("INVALID user_data in app_activate_gtk");
+        g_error("INVALID res_name string. String is NULL in app_load_css_from_resource");
         return;
     }
 
-    // Load CSS
-    /*GtkCssProvider *css_provider = gtk_css_provider_new();
-    gtk_css_provider_load_from_resource(css_provider, "/app/xorrcxrcx/calculator/style.css");
+    GtkCssProvider *css_provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_resource(css_provider, res_name);
     gtk_style_context_add_provider_for_display(
         gdk_display_get_default(),
         GTK_STYLE_PROVIDER(css_provider),
         GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     g_object_unref(css_provider); // The display takes its own reference
-    g_message("CSS loaded from resource: /app/xorrcxrcx/calculator/style.css\n");*/
+    g_message("CSS Style loaded from resource: %s\n", res_name);
+}
 
-
-    // Load UI
-    GtkBuilder *builder = gtk_builder_new_from_resource("/app/xorrcxrcx/calculator/ui-layout-main.ui");
-    if (!builder)
+G_MODULE_EXPORT void app_build_and_present_ui(mainApp *_mApp, gchar* res_name)
+{
+    if(!_mApp)
     {
-        g_error("Failed to load UI XML from resource: /app/xorrcxrcx/calculator/ui-layout-main.ui");
+        g_error("INVALID mainApp pointer in app_build_and_present_ui");
         return;
     }
-    g_message("UI loaded from resource: /app/xorrcxrcx/calculator/ui-layout-main.ui\n");
+    if(!res_name)
+    {
+        g_error("INVALID res_name string. String is NULL in app_build_and_present_ui");
+        return;
+    }
 
+    GtkBuilder *builder = gtk_builder_new_from_resource(res_name);
+    if (!builder)
+    {
+        g_error("Failed to load UI XML from resource: %s",res_name);
+        return;
+    }
+    g_message("UI loaded from resource: %s\n", res_name);
+
+    _mApp->main_window = NULL;
     _mApp->main_window = GTK_WINDOW(gtk_builder_get_object(builder, "main_window"));
     if (!_mApp->main_window) {
         g_error("Failed to get 'main_window' from builder.");
         g_object_unref(builder);
         return;
     }
-    gtk_window_set_application(GTK_WINDOW(_mApp->main_window), _app);
+
+    gtk_window_set_application(GTK_WINDOW(_mApp->main_window), _mApp->adw_app_handle);
 
 
     // INITIALIZING LABELS
@@ -175,11 +259,11 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
     _mApp->pref_window = GTK_WINDOW(gtk_builder_get_object(builder, "preferences_window"));
     
     // CONNECTING CALC BUTTON CALLBACKS
-    GObject *button = NULL; // Re-declare or ensure it's in scope if needed
+    GObject *button = NULL;
 #define CONNECT_BUTTON(id) \
     button = gtk_builder_get_object(builder, id); \
     if (button) g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp); \
-    else g_warning("Button '%s' not found in UI.", id)
+    else g_error("Button id:'%s' not found in UI.", id)
 
     CONNECT_BUTTON("button_clear");
     CONNECT_BUTTON("button_backspace");
@@ -206,7 +290,8 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
     if (_mApp->dark_mode_switch) {
         g_signal_connect(_mApp->dark_mode_switch, "state-set", G_CALLBACK(app_on_theme_switch_set), NULL);
     } else {
-        g_warning("Switch 'dark_mode_switch' not found in UI.");
+        g_error("Switch id:'dark_mode_switch' not found in UI XML file.");
+        return;
     }
 
     // ACTIONS INIT
@@ -221,6 +306,20 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
     g_object_unref(builder);
 }
 
+
+G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
+{
+    mainApp *_mApp = (mainApp *)user_data;
+    if (!_mApp)
+    {
+        g_error("INVALID user_data in app_activate_gtk");
+        return;
+    }
+
+    app_load_css_from_resource(app_get_res_path("style.css"));
+    app_build_and_present_ui(_mApp, app_get_res_path("ui-layout-main.ui"));
+}
+
 G_MODULE_EXPORT int app_main_run(int argc, char **argv)
 {
     mainApp *mApp = NULL;
@@ -228,10 +327,13 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
     if (!mApp)
     {
         g_error("Failed to allocate memory for mainApp structure.");
+        return EXIT_FAILURE;
     }
 
+    adw_init(); //use or not?
+
     mApp->app_settings_init_finished = FALSE;
-    mApp->res_base_path = NULL;
+    //mApp->res_base_path = NULL;
     mApp->res_main_handle = NULL;
     mApp->res_main_handle = resources_get_resource();
     if(mApp->res_main_handle)
@@ -252,7 +354,7 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
         g_error(" Failed to allocate memory for Calculator structure.");
     }
     
-    mApp->res_base_path = "/app/xorrcxrcx/calculator/";
+    //mApp->res_base_path = "/app/xorrcxrcx/calculator/";
 
     mApp->calc->cState = CSTATE_RESET;
     mApp->calc->just_calculated = FALSE;
