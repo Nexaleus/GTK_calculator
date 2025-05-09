@@ -41,7 +41,7 @@ G_MODULE_EXPORT void app_menu_about_activated(GSimpleAction *action, GVariant *p
     adw_about_window_set_developers(ADW_ABOUT_WINDOW(about_window), developers);
     adw_about_window_set_copyright(ADW_ABOUT_WINDOW(about_window), "© 2025 Xor Rcxrcx");
     adw_about_window_set_license_type(ADW_ABOUT_WINDOW(about_window), GTK_LICENSE_LGPL_3_0);
-    adw_about_window_set_application_icon(ADW_ABOUT_WINDOW(about_window), "gnome-calculator-symbolic");
+    //adw_about_window_set_application_icon(ADW_ABOUT_WINDOW(about_window), "/app/xorrcxrcx/calculator/app-icon.png");
     gtk_window_set_transient_for(GTK_WINDOW(about_window), GTK_WINDOW(_mApp->main_window));
     gtk_window_set_modal(GTK_WINDOW(about_window), TRUE);
     gtk_window_present(GTK_WINDOW(about_window));
@@ -72,56 +72,6 @@ G_MODULE_EXPORT void app_on_theme_switch_set(GtkSwitch *_switch, gpointer user_d
     }
 }
 
-G_MODULE_EXPORT void app_update_font_label_display(mainApp *_mApp)
-{
-    if (!_mApp || _mApp->global_font_size < 2 || !_mApp->label_fnt_size)
-    {
-        g_warning("INVALID mainApp/label_fnt_size pointer!\n");
-    }
-    else
-    {
-        char display_label_buffer[5];
-        snprintf(display_label_buffer, sizeof(display_label_buffer), "%d", _mApp->global_font_size);
-        gtk_label_set_text(_mApp->label_fnt_size, display_label_buffer);
-    }
-}
-
-G_MODULE_EXPORT void app_on_increase_font_clicked(GtkButton *button, gpointer user_data)
-{
-    mainApp *_mApp = NULL;
-    _mApp = (mainApp *)user_data;
-    if (_mApp)
-    {
-        if (_mApp->global_font_size < 24)
-        {
-            _mApp->global_font_size++;
-            app_update_font_label_display(_mApp);
-        }
-    }
-    else
-    {
-        g_warning("INVALID mainApp pointer!\n");
-    }
-}
-
-G_MODULE_EXPORT void app_on_decrease_font_clicked(GtkButton *button, gpointer user_data)
-{
-    mainApp *_mApp = NULL;
-    _mApp = (mainApp *)user_data;
-    if (_mApp)
-    {
-        if (_mApp->global_font_size > 6)
-        {
-            _mApp->global_font_size--;
-            app_update_font_label_display(_mApp);
-        }
-    }
-    else
-    {
-        g_warning("INVALID mainApp pointer!\n");
-    }
-}
-
 G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer user_data)
 {
     mainApp *_mApp = NULL;
@@ -133,31 +83,41 @@ G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer 
 
     if (_mApp->pref_window)
     {
-        AdwStyleManager *style_manager = NULL;
-        style_manager = adw_style_manager_get_default();
-        if (style_manager)
+        if (!_mApp->app_settings_init_finished)
         {
-            if (_mApp->dark_mode_switch)
+            AdwStyleManager *style_manager = NULL;
+            style_manager = adw_style_manager_get_default();
+            if (style_manager)
             {
-                if (adw_style_manager_get_dark(style_manager))
+                if (_mApp->dark_mode_switch)
                 {
-                    gtk_switch_set_active(_mApp->dark_mode_switch, FALSE);
-                    g_message("Current app theme is in Dark Mode, setting switch ON\n");
+                    if (adw_style_manager_get_dark(style_manager))
+                    {
+                        gtk_switch_set_active(_mApp->dark_mode_switch, FALSE);
+                        g_message("Current app theme is in Dark Mode, setting switch OFF\n");
+                    }
+                    else
+                    {
+                        gtk_switch_set_active(_mApp->dark_mode_switch, TRUE);
+                        g_message("Current app theme is in Light Mode, setting switch ON\n");
+                    }
                 }
                 else
                 {
-                    gtk_switch_set_active(_mApp->dark_mode_switch, TRUE);
-                    g_message("Current app theme is in Light Mode, setting switch OFF\n");
+                    g_warning("Dark mode switch is NULL!\n");
                 }
             }
             else
             {
-                g_warning("Dark mode switch is NULL!\n");
+                g_warning("Default ADW Style manager handle was not found!\n");
             }
+
+            g_message("App settings successfully initialized.\n");
+            _mApp->app_settings_init_finished = TRUE;
         }
         else
         {
-            g_warning("Default ADW Style manager handle was not found!\n");
+            g_message("App settings were ALREADY initialized.\n");
         }
 
         gtk_window_set_transient_for(GTK_WINDOW(_mApp->pref_window), GTK_WINDOW(_mApp->main_window));
@@ -178,7 +138,6 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
         return;
     }
 
-    
     // Load CSS
     /*GtkCssProvider *css_provider = gtk_css_provider_new();
     gtk_css_provider_load_from_resource(css_provider, "/app/xorrcxrcx/calculator/style.css");
@@ -249,23 +208,6 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
     } else {
         g_warning("Switch 'dark_mode_switch' not found in UI.");
     }
-    
-
-    _mApp->label_fnt_size = GTK_LABEL(gtk_builder_get_object(builder, "label_fnt_size"));
-    if (_mApp->label_fnt_size) {
-         app_update_font_label_display(_mApp);
-    } else {
-        g_warning("Label 'label_fnt_size' not found in UI.");
-    }
-
-#define CONNECT_SETTINGS_BUTTON(id, callback) \
-    button = gtk_builder_get_object(builder, id); \
-    if (button) g_signal_connect(button, "clicked", G_CALLBACK(callback), _mApp); \
-    else g_warning("Button '%s' not found in UI.", id)
-
-    CONNECT_SETTINGS_BUTTON("button_fnt_increase", app_on_increase_font_clicked);
-    CONNECT_SETTINGS_BUTTON("button_fnt_decrease", app_on_decrease_font_clicked);
-#undef CONNECT_SETTINGS_BUTTON
 
     // ACTIONS INIT
     const GActionEntry win_actions[] = {
@@ -287,6 +229,8 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
     {
         g_error("Failed to allocate memory for mainApp structure.");
     }
+
+    mApp->app_settings_init_finished = FALSE;
     mApp->res_base_path = NULL;
     mApp->res_main_handle = NULL;
     mApp->res_main_handle = resources_get_resource();

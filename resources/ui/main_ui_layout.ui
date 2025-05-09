@@ -394,45 +394,10 @@
             <property name="title" translatable="yes">Appearance</property>
             <child>
               <object class="AdwActionRow">
-                <property name="title" translatable="yes">Switch to Light Mode</property>
+                <property name="title" translatable="yes">Light Mode</property>
                 <child type="suffix">
                   <object class="GtkSwitch" id="dark_mode_switch">
                     <property name="valign">center</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="AdwActionRow">
-                <property name="title" translatable="yes">Font Size</property>
-                <child>
-                  <object class="GtkLabel" id="label_fnt_size">
-                    <property name="margin-end">6</property>
-                    <property name="margin-top">2</property>
-                    <property name="single-line-mode">True</property>
-                    <attributes>
-                      <attribute name="font-desc" value="Sans 16"/>
-                    </attributes>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkButton" id="button_fnt_decrease">
-                    <property name="halign">center</property>
-                    <property name="icon-name">list-remove-symbolic</property>
-                    <property name="valign">center</property>
-                    <style>
-                      <class name="circular"/>
-                    </style>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkButton" id="button_fnt_increase">
-                    <property name="halign">end</property>
-                    <property name="icon-name">list-add-symbolic</property>
-                    <property name="valign">center</property>
-                    <style>
-                      <class name="circular"/>
-                    </style>
                   </object>
                 </child>
               </object>
