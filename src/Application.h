@@ -29,8 +29,6 @@ G_MODULE_EXPORT void app_menu_help_activated(GSimpleAction *action, GVariant *pa
 G_MODULE_EXPORT void app_menu_about_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data);
 
 G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer user_data);
-//G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_name);
-//G_MODULE_EXPORT void app_load_theme_from_file(const char *theme_name, gboolean force_dark);
 G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data);
 G_MODULE_EXPORT void app_on_theme_switch_set(GtkSwitch* _switch, gpointer user_data);
 G_MODULE_EXPORT int app_main_run(int argc, char **argv);
