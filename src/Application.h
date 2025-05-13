@@ -18,11 +18,9 @@ typedef struct
     AdwApplicationWindow *main_window;
     Calculator *calc;
     int global_font_size;
-    //gchar *res_base_path;
     gboolean app_settings_init_finished;
 } mainApp;
 
-extern gchar* resource_base_path_absolute = "/app/xorrcxrcx/calculator/";
 
 G_MODULE_EXPORT void app_menu_preferences_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data);
 G_MODULE_EXPORT void app_menu_help_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data);

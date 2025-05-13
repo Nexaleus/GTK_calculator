@@ -9,9 +9,11 @@
 // Include the generated GResource header
 #include "main_application_resources.h"
 
+gchar *resource_base_path_absolute = "/app/xorrcxrcx/calculator/"; // "/app/xorrcxrcx/calculator/";
+
 G_MODULE_EXPORT gchar* app_append_to_str(const gchar *dest_text, const gchar *text_to_append)
 {
-    // const char *current_text = gtk_label_get_text(GTK_LABEL(_label));
+
     gsize dest_len = strlen(dest_text);
     gsize append_len = strlen(text_to_append);
     // Calculate total size needed: current length + append length + 1 (for null terminator)
@@ -24,7 +26,7 @@ G_MODULE_EXPORT gchar* app_append_to_str(const gchar *dest_text, const gchar *te
         g_error("Failed to allocate memory in append_to_display");
         // Allocation failed, cannot proceed
     }
-
+    
     // Copy the current text into the new buffer first.
     // Using strcpy here is safe because we allocated exactly enough space initially.
     strcpy(new_text_buffer, dest_text);
@@ -36,8 +38,7 @@ G_MODULE_EXPORT gchar* app_append_to_str(const gchar *dest_text, const gchar *te
 
     // Update the label with the newly created string
     // gtk_label_set_text(GTK_LABEL(_label), new_text_buffer);
-    // Free the memory allocated by g_malloc
-    g_free(new_text_buffer);
+    // The caller is now responsible for freeing this memory.
     return new_text_buffer;
 }
 
@@ -46,7 +47,7 @@ G_MODULE_EXPORT gchar* app_get_res_path(const gchar *res_name)
     if (!resource_base_path_absolute)
     {
         g_warning("During app_get_res_path: resource_base_path_absolute string is NULL.\n");
-        return;
+        return NULL;
     }
     else
     {
@@ -58,25 +59,26 @@ G_MODULE_EXPORT gchar* app_get_res_path(const gchar *res_name)
             if (!res_path_format)
             {
                 g_warning("During app_get_res_path: res_path_format string is NULL.\n");
-                return;
+                return NULL;
             }
             else
             {
                 full_path = g_strdup_printf(res_path_format, res_name);
+                g_free(res_path_format); // Free res_path_format as it's no longer needed
                 if (full_path)
                 {
                     return full_path;
                 }
                 else
                 {
-                    return;
+                    return NULL;
                 }
             }
         }
         else
         {
             g_warning("During app_get_res_path: res_path string arg is NULL.\n");
-            return;
+            return NULL;
         }
     }
 }
@@ -250,7 +252,6 @@ G_MODULE_EXPORT void app_build_and_present_ui(mainApp *_mApp, gchar* res_name)
 
     gtk_window_set_application(GTK_WINDOW(_mApp->main_window), _mApp->adw_app_handle);
 
-
     // INITIALIZING LABELS
     _mApp->label_handle = GTK_LABEL(gtk_builder_get_object(builder, "display_label"));
     _mApp->label_preview = GTK_LABEL(gtk_builder_get_object(builder, "preview_display"));
@@ -316,7 +317,7 @@ G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
         return;
     }
 
-    app_load_css_from_resource(app_get_res_path("style.css"));
+    //app_load_css_from_resource(app_get_res_path("style.css"));
     app_build_and_present_ui(_mApp, app_get_res_path("ui-layout-main.ui"));
 }
 
@@ -333,7 +334,6 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
     adw_init(); //use or not?
 
     mApp->app_settings_init_finished = FALSE;
-    //mApp->res_base_path = NULL;
     mApp->res_main_handle = NULL;
     mApp->res_main_handle = resources_get_resource();
     if(mApp->res_main_handle)
@@ -354,8 +354,6 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
         g_error(" Failed to allocate memory for Calculator structure.");
     }
     
-    //mApp->res_base_path = "/app/xorrcxrcx/calculator/";
-
     mApp->calc->cState = CSTATE_RESET;
     mApp->calc->just_calculated = FALSE;
     mApp->global_font_size = 11;

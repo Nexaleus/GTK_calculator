@@ -1,5 +1,5 @@
 # Minimum CMake version required
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 set(PKG_CONFIG_EXECUTABLE F:/Development/vcpkg/vcpkg/packages/pkgconf_x64-windows/tools/pkgconf/pkgconf.exe)
 # Define the project name
@@ -83,14 +83,16 @@ add_custom_command(
 # Add the executable target
 add_executable(gtk_calculator src/main.c src/Application.c src/Calculator.c app_manifest.rc)
 
+
 # Add the generated GResource C file to the executable sources !!!!!!
+# But should this command run even with the files not generated yet? what if it wont find them the first time?
 target_sources(gtk_calculator PRIVATE ${GRESOURCE_GENERATED_C} ${GRESOURCE_GENERATED_H})
+
 
 # Add the directory containing the generated header to the include directories
 target_include_directories(gtk_calculator PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-# Link GTK4 to the executable
-#target_link_libraries(gtk_calculator PUBLIC PkgConfig::GTK4)
+# Link GTK4 & ADW to the executable
 target_link_libraries(gtk_calculator PUBLIC PkgConfig::GTK4 PkgConfig::LIBADWAITA)
 
 # Hide console window for Release builds on Windows
@@ -111,7 +113,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # --- Build Type Message ---
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose build type: Debug Release RelWithDebInfo MinSizeRel" FORCE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose build type: Debug Release" FORCE)
   message(STATUS "CMAKE_BUILD_TYPE not set, defaulting to Debug.")
 else()
   message(STATUS "CMAKE_BUILD_TYPE is set to ${CMAKE_BUILD_TYPE}.")
