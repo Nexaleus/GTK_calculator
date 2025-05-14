@@ -7,21 +7,7 @@ res/custom-theme.css
 res/custom-themeRRRRR.css
 /diagrams/*
 /reference/*
-
-#IGNORING THE WHOLE BUILD DIRECTORY EXCEPT TWO FILES
-
 /build/*
-!/build/debug
-/build/debug/*
-!/build/debug/res
-/build/debug/res/*
-!/build/debug/res/ui
-/build/debug/res/ui/*
-!/build/debug/res/ui/UI_MAIN_libadwaita.ui
-!/build/debug/res/ui/gtk_new_UI_layout.ui
-!/build/debug/res/ui/gtk_new_UI_layout_PREFERENCES.ui
-
-####################################################
 
 GTK_calculator.code-workspace
 CMakeUserPresets.json

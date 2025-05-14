@@ -6,6 +6,83 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// Include the generated GResource header
+#include "main_application_resources.h"
+
+gchar *resource_base_path_absolute = "/app/xorrcxrcx/calculator/"; // "/app/xorrcxrcx/calculator/";
+
+G_MODULE_EXPORT gchar* app_append_to_str(const gchar *dest_text, const gchar *text_to_append)
+{
+
+    gsize dest_len = strlen(dest_text);
+    gsize append_len = strlen(text_to_append);
+    // Calculate total size needed: current length + append length + 1 (for null terminator)
+    gsize total_size = dest_len + append_len + 1;
+
+    // Allocate memory for the new combined string
+    char *new_text_buffer = g_malloc(total_size);
+    if (!new_text_buffer)
+    {
+        g_error("Failed to allocate memory in append_to_display");
+        // Allocation failed, cannot proceed
+    }
+    
+    // Copy the current text into the new buffer first.
+    // Using strcpy here is safe because we allocated exactly enough space initially.
+    strcpy(new_text_buffer, dest_text);
+
+    // Append the new text using g_strlcat for safety.
+    // g_strlcat ensures null termination and prevents buffer overflows.
+    // The third argument is the total size of the destination buffer.
+    g_strlcat(new_text_buffer, text_to_append, total_size);
+
+    // Update the label with the newly created string
+    // gtk_label_set_text(GTK_LABEL(_label), new_text_buffer);
+    // The caller is now responsible for freeing this memory.
+    return new_text_buffer;
+}
+
+G_MODULE_EXPORT gchar* app_get_res_path(const gchar *res_name)
+{
+    if (!resource_base_path_absolute)
+    {
+        g_warning("During app_get_res_path: resource_base_path_absolute string is NULL.\n");
+        return NULL;
+    }
+    else
+    {
+        if (res_name)
+        {
+            gchar *full_path = NULL;
+            gchar *res_path_format = NULL;
+            res_path_format = app_append_to_str(resource_base_path_absolute, "%s");
+            if (!res_path_format)
+            {
+                g_warning("During app_get_res_path: res_path_format string is NULL.\n");
+                return NULL;
+            }
+            else
+            {
+                full_path = g_strdup_printf(res_path_format, res_name);
+                g_free(res_path_format); // Free res_path_format as it's no longer needed
+                if (full_path)
+                {
+                    return full_path;
+                }
+                else
+                {
+                    return NULL;
+                }
+            }
+        }
+        else
+        {
+            g_warning("During app_get_res_path: res_path string arg is NULL.\n");
+            return NULL;
+        }
+    }
+}
+
 G_MODULE_EXPORT void app_menu_preferences_activated(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
     mainApp *_mApp = (mainApp *)user_data;
@@ -38,7 +115,7 @@ G_MODULE_EXPORT void app_menu_about_activated(GSimpleAction *action, GVariant *p
     adw_about_window_set_developers(ADW_ABOUT_WINDOW(about_window), developers);
     adw_about_window_set_copyright(ADW_ABOUT_WINDOW(about_window), "© 2025 Xor Rcxrcx");
     adw_about_window_set_license_type(ADW_ABOUT_WINDOW(about_window), GTK_LICENSE_LGPL_3_0);
-    adw_about_window_set_application_icon(ADW_ABOUT_WINDOW(about_window), "gnome-calculator-symbolic");
+    //adw_about_window_set_application_icon(ADW_ABOUT_WINDOW(about_window), "/app/xorrcxrcx/calculator/app-icon.png");
     gtk_window_set_transient_for(GTK_WINDOW(about_window), GTK_WINDOW(_mApp->main_window));
     gtk_window_set_modal(GTK_WINDOW(about_window), TRUE);
     gtk_window_present(GTK_WINDOW(about_window));
@@ -46,195 +123,26 @@ G_MODULE_EXPORT void app_menu_about_activated(GSimpleAction *action, GVariant *p
     g_message("About window shown.\n");
 }
 
-G_MODULE_EXPORT void app_load_ui_from_file(mainApp *_mApp, const char *ui_file_name)
+G_MODULE_EXPORT void app_on_theme_switch_set(GtkSwitch *_switch, gpointer user_data)
 {
-    g_print("----------------------------------\nAttempting to load UI XML FILE: '%s'\n\n", ui_file_name);
-    gchar *relative_path = NULL;
-    gchar *absolute_path = NULL;
-
-    //"res/<ui_file_name>"
-    relative_path = g_build_filename("res", "ui", ui_file_name, NULL);
-    if (relative_path)
+    AdwStyleManager *style_manager = NULL;
+    style_manager = adw_style_manager_get_default();
+    if (style_manager)
     {
-        g_print("Connected relative path: %s\n", relative_path);
-
-        absolute_path = g_canonicalize_filename(relative_path, NULL);
-        g_free(relative_path);
-    }
-    else
-    {
-        g_error("Could not get RELATIVE file path used for loading main UI structure.\n");
-    }
-
-    if (absolute_path)
-    {
-        if (g_file_test(absolute_path, G_FILE_TEST_EXISTS))
+        if (adw_style_manager_get_dark(style_manager))
         {
-            GtkBuilder *builder = gtk_builder_new_from_file(absolute_path);
-
-            _mApp->main_window = NULL;
-            GObject *appWindow = gtk_builder_get_object(builder, "main_window");
-            gtk_window_set_application(GTK_APPLICATION_WINDOW(appWindow), _mApp->adw_app_handle);
-            _mApp->main_window = GTK_WINDOW(appWindow);
-
-            //INITIALIZING LABELS
-            _mApp->label_handle = NULL;
-            GObject *display_label = gtk_builder_get_object(builder,"display_label");
-            _mApp->label_handle = GTK_LABEL(display_label);
-
-            _mApp->label_preview = NULL;
-            GObject *preview_label = gtk_builder_get_object(builder,"preview_display");
-            _mApp->label_preview = GTK_LABEL(preview_label);
-
-            //PREF WINDOW INIT
-            _mApp->pref_window = NULL;
-            GObject *pref_win_obj = gtk_builder_get_object(builder,"preferences_window");
-            _mApp->pref_window = GTK_WINDOW(pref_win_obj);
-
-            //CONNECTING CALC BUTTON CALLBACKS
-            GObject *button = NULL;
-            button = gtk_builder_get_object(builder,"button_clear");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-
-            button = gtk_builder_get_object(builder,"button_backspace");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-
-            button = gtk_builder_get_object(builder,"button_divide");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_multiply");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_7");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_8");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_9");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_subtract");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_4");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_5");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_6");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_add");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_1");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_2");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_3");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_equals");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-
-            button = gtk_builder_get_object(builder,"button_0");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);
-            
-            button = gtk_builder_get_object(builder,"button_decimal");
-            g_signal_connect(button,"clicked",G_CALLBACK(calc_on_button_click),_mApp);         
-            //------------------------------------------------------------------------------------
-
-            /*button = gtk_builder_get_object(builder, "settings_button");
-            g_signal_connect(button,"clicked",G_CALLBACK(app_on_settings_button_clicked),_mApp);*/ 
-
-            _mApp->label_fnt_size = NULL;
-            GObject *label_fnt = gtk_builder_get_object(builder, "label_fnt_size");
-            _mApp->label_fnt_size = GTK_LABEL(label_fnt);
-            app_update_font_label_display(_mApp);
-
-            button = gtk_builder_get_object(builder, "button_fnt_increase");
-            g_signal_connect(button,"clicked",G_CALLBACK(app_on_increase_font_clicked),_mApp);
-
-            button = gtk_builder_get_object(builder, "button_fnt_decrease");
-            g_signal_connect(button,"clicked",G_CALLBACK(app_on_decrease_font_clicked),_mApp);
-
-
-            //ACTIONS INIT
-            const GActionEntry win_actions[] = {
-                {"preferences", app_menu_preferences_activated, NULL, NULL, NULL},
-                {"help", app_menu_help_activated, NULL, NULL, NULL},
-                {"about", app_menu_about_activated, NULL, NULL, NULL}
-            };
-            // Pass _mApp as user_data, making it available to the action handlers.
-            g_action_map_add_action_entries(G_ACTION_MAP(_mApp->main_window), win_actions, G_N_ELEMENTS(win_actions), _mApp);
-
-            //------------
-            gtk_window_present(GTK_APPLICATION_WINDOW(appWindow));
-            g_object_unref(builder);
+            adw_style_manager_set_color_scheme(style_manager, ADW_COLOR_SCHEME_FORCE_LIGHT);
+            g_message("App theme set to LIGHT MODE\n");
         }
         else
         {
-            g_error("FILE NOT FOUND AT: %s", absolute_path);
-        }
-        g_free(absolute_path);
-    }
-    else
-    {
-        g_error("Could not get ABSOLUTE file path used for loading main UI structure.\n");
-    }
-}
-
-G_MODULE_EXPORT void app_update_font_label_display(mainApp *_mApp)
-{
-    if(!_mApp || _mApp->global_font_size < 2 || !_mApp->label_fnt_size)
-    {
-        g_warning("INVALID mainApp/label_fnt_size pointer!\n");
-    }
-    else
-    {
-        char display_label_buffer[5];
-        snprintf(display_label_buffer, sizeof(display_label_buffer), "%d",_mApp->global_font_size);
-        gtk_label_set_text(_mApp->label_fnt_size,display_label_buffer);
-    }
-}
-
-G_MODULE_EXPORT void app_on_increase_font_clicked(GtkButton *button, gpointer user_data)
-{
-    mainApp *_mApp = NULL;
-    _mApp = (mainApp *)user_data;
-    if (_mApp)
-    {
-        if(_mApp->global_font_size < 24)
-        {       
-            _mApp->global_font_size++;
-            app_update_font_label_display(_mApp);
+            adw_style_manager_set_color_scheme(style_manager, ADW_COLOR_SCHEME_FORCE_DARK);
+            g_message("App theme set to DARK MODE\n");
         }
     }
     else
     {
-        g_warning("INVALID mainApp pointer!\n");
-    }
-}
-
-G_MODULE_EXPORT void app_on_decrease_font_clicked(GtkButton *button, gpointer user_data)
-{
-    mainApp *_mApp = NULL;
-    _mApp = (mainApp *)user_data;
-    if (_mApp)
-    {
-        if(_mApp->global_font_size > 6)
-        {
-            _mApp->global_font_size--;
-            app_update_font_label_display(_mApp);
-        }
-    }
-    else
-    {
-        g_warning("INVALID mainApp pointer!\n");
+        g_warning("Default ADW Style manager handle was not found!\n");
     }
 }
 
@@ -247,8 +155,45 @@ G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer 
         g_error("INVALID TYPE CONVERSION TO MAINAPP POINTER");
     }
 
-    if(_mApp->pref_window)
+    if (_mApp->pref_window)
     {
+        if (!_mApp->app_settings_init_finished)
+        {
+            AdwStyleManager *style_manager = NULL;
+            style_manager = adw_style_manager_get_default();
+            if (style_manager)
+            {
+                if (_mApp->dark_mode_switch)
+                {
+                    if (adw_style_manager_get_dark(style_manager))
+                    {
+                        gtk_switch_set_active(_mApp->dark_mode_switch, FALSE);
+                        g_message("Current app theme is in Dark Mode, setting switch OFF\n");
+                    }
+                    else
+                    {
+                        gtk_switch_set_active(_mApp->dark_mode_switch, TRUE);
+                        g_message("Current app theme is in Light Mode, setting switch ON\n");
+                    }
+                }
+                else
+                {
+                    g_warning("Dark mode switch is NULL!\n");
+                }
+            }
+            else
+            {
+                g_warning("Default ADW Style manager handle was not found!\n");
+            }
+
+            g_message("App settings successfully initialized.\n");
+            _mApp->app_settings_init_finished = TRUE;
+        }
+        else
+        {
+            g_message("App settings were ALREADY initialized.\n");
+        }
+
         gtk_window_set_transient_for(GTK_WINDOW(_mApp->pref_window), GTK_WINDOW(_mApp->main_window));
         gtk_window_present(GTK_WINDOW(_mApp->pref_window));
     }
@@ -258,86 +203,122 @@ G_MODULE_EXPORT void app_on_settings_button_clicked(GtkButton *button, gpointer 
     }
 }
 
-G_MODULE_EXPORT void app_load_theme_from_file(const char *theme_name, gboolean force_dark)
+G_MODULE_EXPORT void app_load_css_from_resource(gchar *res_name)
 {
-    GtkCssProvider *provider = gtk_css_provider_new();
-    GdkDisplay *display = gdk_display_get_default();
-
-    g_print("Attempting to load theme: '%s'\n\n", theme_name);
-    gchar *relative_path = NULL;
-    gchar *absolute_path = NULL;
-
-    //"share/themes/<theme_name>/gtk-4.0/gtk.css"
-    gchar *filename_gtk = NULL;
-    filename_gtk = force_dark ? "gtk-dark.css" : "gtk.css";
-    g_print("Theme source file name: %s\n", filename_gtk);
-
-    relative_path = g_build_filename("share", "themes", theme_name, "gtk-4.0", filename_gtk, NULL);
-    if (relative_path)
+    if (!res_name)
     {
-        g_print("Connected relative path: %s\n", relative_path);
-
-        absolute_path = g_canonicalize_filename(relative_path, NULL);
-        g_free(relative_path);
-    }
-    else
-    {
-        g_warning("Could not get relative file path.\n");
+        g_error("INVALID res_name string. String is NULL in app_load_css_from_resource");
+        return;
     }
 
-    gchar *currentDir = NULL;
-    currentDir = g_get_current_dir();
-    if (currentDir)
-    {
-        g_print("Current Working Directory: %s\n", currentDir);
-        g_free(currentDir);
-    }
-    else
-    {
-        g_warning("Could not get current working directory.\n");
-    }
-
-    if (absolute_path)
-    {
-        g_print("Absolute file path: %s\n\n", absolute_path);
-        g_print("Attempting to load theme from: %s\n", absolute_path); // Debug print
-
-        // Check if the file exists before attempting to load
-        if (g_file_test(absolute_path, G_FILE_TEST_IS_REGULAR))
-        {
-            gtk_css_provider_load_from_path(provider, absolute_path);
-
-            // Apply the CSS provider to the default display
-            gtk_style_context_add_provider_for_display(display,
-                                                       GTK_STYLE_PROVIDER(provider),
-                                                       GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-            g_print("Theme '%s' loaded successfully.\n", theme_name);
-        }
-        else
-        {
-            g_warning("Theme CSS file not found or not accessible: %s\n", absolute_path);
-        }
-
-        // The provider is referenced by the display, so we can unref it here
-        g_object_unref(provider);
-        g_free(absolute_path);
-    }
-    else
-    {
-        g_warning("Could not get absolute file path.\n");
-    }
+    GtkCssProvider *css_provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_resource(css_provider, res_name);
+    gtk_style_context_add_provider_for_display(
+        gdk_display_get_default(),
+        GTK_STYLE_PROVIDER(css_provider),
+        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    g_object_unref(css_provider); // The display takes its own reference
+    g_message("CSS Style loaded from resource: %s\n", res_name);
 }
+
+G_MODULE_EXPORT void app_build_and_present_ui(mainApp *_mApp, gchar* res_name)
+{
+    if(!_mApp)
+    {
+        g_error("INVALID mainApp pointer in app_build_and_present_ui");
+        return;
+    }
+    if(!res_name)
+    {
+        g_error("INVALID res_name string. String is NULL in app_build_and_present_ui");
+        return;
+    }
+
+    GtkBuilder *builder = gtk_builder_new_from_resource(res_name);
+    if (!builder)
+    {
+        g_error("Failed to load UI XML from resource: %s",res_name);
+        return;
+    }
+    g_message("UI loaded from resource: %s\n", res_name);
+
+    _mApp->main_window = NULL;
+    _mApp->main_window = GTK_WINDOW(gtk_builder_get_object(builder, "main_window"));
+    if (!_mApp->main_window) {
+        g_error("Failed to get 'main_window' from builder.");
+        g_object_unref(builder);
+        return;
+    }
+
+    gtk_window_set_application(GTK_WINDOW(_mApp->main_window), _mApp->adw_app_handle);
+
+    // INITIALIZING LABELS
+    _mApp->label_handle = GTK_LABEL(gtk_builder_get_object(builder, "display_label"));
+    _mApp->label_preview = GTK_LABEL(gtk_builder_get_object(builder, "preview_display"));
+
+    // PREF WINDOW INIT
+    _mApp->pref_window = GTK_WINDOW(gtk_builder_get_object(builder, "preferences_window"));
+    
+    // CONNECTING CALC BUTTON CALLBACKS
+    GObject *button = NULL;
+#define CONNECT_BUTTON(id) \
+    button = gtk_builder_get_object(builder, id); \
+    if (button) g_signal_connect(button, "clicked", G_CALLBACK(calc_on_button_click), _mApp); \
+    else g_error("Button id:'%s' not found in UI.", id)
+
+    CONNECT_BUTTON("button_clear");
+    CONNECT_BUTTON("button_backspace");
+    CONNECT_BUTTON("button_divide");
+    CONNECT_BUTTON("button_multiply");
+    CONNECT_BUTTON("button_7");
+    CONNECT_BUTTON("button_8");
+    CONNECT_BUTTON("button_9");
+    CONNECT_BUTTON("button_subtract");
+    CONNECT_BUTTON("button_4");
+    CONNECT_BUTTON("button_5");
+    CONNECT_BUTTON("button_6");
+    CONNECT_BUTTON("button_add");
+    CONNECT_BUTTON("button_1");
+    CONNECT_BUTTON("button_2");
+    CONNECT_BUTTON("button_3");
+    CONNECT_BUTTON("button_equals");
+    CONNECT_BUTTON("button_0");
+    CONNECT_BUTTON("button_decimal");
+#undef CONNECT_BUTTON
+    //------------------------------------------------------------------------------------
+
+    _mApp->dark_mode_switch = GTK_SWITCH(gtk_builder_get_object(builder, "dark_mode_switch"));
+    if (_mApp->dark_mode_switch) {
+        g_signal_connect(_mApp->dark_mode_switch, "state-set", G_CALLBACK(app_on_theme_switch_set), NULL);
+    } else {
+        g_error("Switch id:'dark_mode_switch' not found in UI XML file.");
+        return;
+    }
+
+    // ACTIONS INIT
+    const GActionEntry win_actions[] = {
+        {"preferences", app_menu_preferences_activated, NULL, NULL, NULL},
+        {"help", app_menu_help_activated, NULL, NULL, NULL},
+        {"about", app_menu_about_activated, NULL, NULL, NULL}};
+    g_action_map_add_action_entries(G_ACTION_MAP(_mApp->main_window), win_actions, G_N_ELEMENTS(win_actions), _mApp);
+
+    //------------
+    gtk_window_present(GTK_WINDOW(_mApp->main_window));
+    g_object_unref(builder);
+}
+
 
 G_MODULE_EXPORT void app_activate_gtk(GtkApplication *_app, gpointer user_data)
 {
-    mainApp *_mApp = NULL;
-    _mApp = (mainApp *)user_data;
+    mainApp *_mApp = (mainApp *)user_data;
     if (!_mApp)
     {
-        g_error("INVALID TYPE CONVERSION TO MAINAPP POINTER");
+        g_error("INVALID user_data in app_activate_gtk");
+        return;
     }
 
-    app_load_ui_from_file(_mApp, "gtk_new_UI_layout_PREFERENCES.ui");
+    //app_load_css_from_resource(app_get_res_path("style.css"));
+    app_build_and_present_ui(_mApp, app_get_res_path("ui-layout-main.ui"));
 }
 
 G_MODULE_EXPORT int app_main_run(int argc, char **argv)
@@ -346,23 +327,33 @@ G_MODULE_EXPORT int app_main_run(int argc, char **argv)
     mApp = (mainApp *)malloc(sizeof(mainApp));
     if (!mApp)
     {
-        /*fprintf(stderr, "Error: Failed to allocate memory for mainApp structure...\n");
-        return 1;*/
         g_error("Failed to allocate memory for mainApp structure.");
+        return EXIT_FAILURE;
     }
 
-    //adw_init();
+    adw_init(); //use or not?
+
+    mApp->app_settings_init_finished = FALSE;
+    mApp->res_main_handle = NULL;
+    mApp->res_main_handle = resources_get_resource();
+    if(mApp->res_main_handle)
+    {
+        g_resources_register(mApp->res_main_handle);
+    }
+    else
+    {
+         g_error("Failed to get Main Resource handle!");
+    }
+    
     mApp->adw_app_handle = NULL;
     mApp->adw_app_handle = adw_application_new("app.xorrcxrcx.calculator", G_APPLICATION_DEFAULT_FLAGS);
     mApp->calc = NULL;
     mApp->calc = (Calculator *)malloc(sizeof(Calculator));
     if (!mApp->calc)
     {
-        /*fprintf(stderr, "Error: Failed to allocate memory for Calculator structure...\n");
-        return 1; // Indicate failure*/
         g_error(" Failed to allocate memory for Calculator structure.");
     }
-
+    
     mApp->calc->cState = CSTATE_RESET;
     mApp->calc->just_calculated = FALSE;
     mApp->global_font_size = 11;

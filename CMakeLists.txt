@@ -1,13 +1,21 @@
 # Minimum CMake version required
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 set(PKG_CONFIG_EXECUTABLE F:/Development/vcpkg/vcpkg/packages/pkgconf_x64-windows/tools/pkgconf/pkgconf.exe)
 # Define the project name
 project(gtk_calculator LANGUAGES C)
+
 # --- Build Configuration Flags ---
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK4 REQUIRED IMPORTED_TARGET GLOBAL gtk4)
 pkg_check_modules(LIBADWAITA REQUIRED IMPORTED_TARGET GLOBAL libadwaita-1)
+
+# Find the glib-compile-resources utility
+find_program(GLIB_COMPILE_RESOURCES_EXECUTABLE glib-compile-resources)
+if(NOT GLIB_COMPILE_RESOURCES_EXECUTABLE)
+    message(FATAL_ERROR "glib-compile-resources not found. Please install GLib development tools.")
+endif()
+
 
 # Common flags for all builds (optional, add if needed)
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4") # Example: Enable more warnings
@@ -26,14 +34,65 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Zi /Od /MDd")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG /MD")
 # set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /LTCG") # Link-Time Code Generation (pairs with /GL)
 
+# --- GResource Compilation ---
+# Define the C identifier prefix for your resource bundle
+set(RESOURCE_C_IDENTIFIER "main_application_resources")
 
-# --- Target Definition ---2
+# Define the path to your gresource XML file (relative to CMAKE_CURRENT_SOURCE_DIR)
+set(GRESOURCE_XML "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.gresource.xml")
 
+# Define the generated C source file name
+set(GRESOURCE_GENERATED_C "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCE_C_IDENTIFIER}.c")
+# Define the generated H header file name
+set(GRESOURCE_GENERATED_H "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCE_C_IDENTIFIER}.h")
+
+
+# Command to compile the GResource XML into a C source file
+add_custom_command(
+    OUTPUT ${GRESOURCE_GENERATED_C}
+    COMMAND ${GLIB_COMPILE_RESOURCES_EXECUTABLE}
+        --target=${GRESOURCE_GENERATED_C}
+        --generate-source
+        --sourcedir=${CMAKE_CURRENT_SOURCE_DIR}/resources # Specify the source directory for files listed in XML
+        ${GRESOURCE_XML}
+    DEPENDS
+        ${GRESOURCE_XML}
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/ui/main_ui_layout.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/style.css
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app-icon.png
+    COMMENT "Compiling GResource XML to C source: ${GRESOURCE_XML}"
+)
+
+# Command to compile the GResource XML into an H header file
+add_custom_command(
+    OUTPUT ${GRESOURCE_GENERATED_H}
+    COMMAND ${GLIB_COMPILE_RESOURCES_EXECUTABLE}
+        --target=${GRESOURCE_GENERATED_H}
+        --generate-header
+        --sourcedir=${CMAKE_CURRENT_SOURCE_DIR}/resources # Specify the source directory for files listed in XML
+        ${GRESOURCE_XML}
+    DEPENDS
+        ${GRESOURCE_XML}
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/ui/main_ui_layout.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/style.css
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app-icon.png
+    COMMENT "Compiling GResource XML to H header: ${GRESOURCE_XML}"
+)
+
+# --- Target Definition ---
 # Add the executable target
 add_executable(gtk_calculator src/main.c src/Application.c src/Calculator.c app_manifest.rc)
 
-# Link GTK4 to the executable
-#target_link_libraries(gtk_calculator PUBLIC PkgConfig::GTK4)
+
+# Add the generated GResource C file to the executable sources !!!!!!
+# But should this command run even with the files not generated yet? what if it wont find them the first time?
+target_sources(gtk_calculator PRIVATE ${GRESOURCE_GENERATED_C} ${GRESOURCE_GENERATED_H})
+
+
+# Add the directory containing the generated header to the include directories
+target_include_directories(gtk_calculator PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+# Link GTK4 & ADW to the executable
 target_link_libraries(gtk_calculator PUBLIC PkgConfig::GTK4 PkgConfig::LIBADWAITA)
 
 # Hide console window for Release builds on Windows
@@ -54,7 +113,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # --- Build Type Message ---
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose build type: Debug Release RelWithDebInfo MinSizeRel" FORCE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose build type: Debug Release" FORCE)
   message(STATUS "CMAKE_BUILD_TYPE not set, defaulting to Debug.")
 else()
   message(STATUS "CMAKE_BUILD_TYPE is set to ${CMAKE_BUILD_TYPE}.")

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/app/xorrcxrcx/calculator">
+    <file compressed="true" alias="ui-layout-main.ui">ui/main_ui_layout.ui</file>
+    <file compressed="true" alias="app-icon.png">icons/app-icon.png</file>
+    <file compressed="true">style.css</file>
+  </gresource>
+</gresources>
